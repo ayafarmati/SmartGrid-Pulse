@@ -1,6 +1,6 @@
 # SmartGrid Pulse
 
-Projet d’Aya Farmati pour la prévision de la demande électrique et la supervision de cinq sous-stations simulées sur Google Cloud.
+Projet  pour la prévision de la demande électrique et la supervision de cinq sous-stations simulées sur Google Cloud.
 
 Le socle Terraform **Pub/Sub → BigQuery Bronze** est validé sur GCP en `europe-west1`. Un test a confirmé la livraison d’un message texte et la lecture des mesures d’un relevé JSON. Le simulateur Python génère des lots de cinq relevés et a été testé localement. Son déploiement sur Cloud Run est le prochain jalon.
 
