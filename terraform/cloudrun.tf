@@ -1,11 +1,11 @@
 variable "simulator_image" {
-  description = "URI de l’image du simulateur dans Artifact Registry. Sa valeur active le déploiement Cloud Run."
+  description = "URI de l’image du service de replay Londres dans Artifact Registry. Sa valeur active Cloud Run."
   type        = string
   default     = null
 }
 
 variable "simulator_invoker_member" {
-  description = "Identité autorisée à déclencher le simulateur, par exemple user:adresse@example.com."
+  description = "Identité autorisée à déclencher le replay Londres, par exemple user:adresse@example.com."
   type        = string
   default     = null
 
@@ -37,8 +37,8 @@ resource "google_artifact_registry_repository" "simulator" {
 }
 
 resource "google_service_account" "simulator" {
-  account_id   = "sa-simulator"
-  display_name = "SmartGrid Pulse Simulator"
+  account_id   = "sa-meter-replay"
+  display_name = "SmartGrid Pulse London Meter Replay"
 
   depends_on = [google_project_service.simulator_api["iam.googleapis.com"]]
 }
@@ -46,6 +46,12 @@ resource "google_service_account" "simulator" {
 resource "google_pubsub_topic_iam_member" "simulator_publisher" {
   topic  = google_pubsub_topic.telemetry.name
   role   = "roles/pubsub.publisher"
+  member = google_service_account.simulator.member
+}
+
+resource "google_storage_bucket_iam_member" "simulator_replay_reader" {
+  bucket = google_storage_bucket.bronze.name
+  role   = "roles/storage.objectViewer"
   member = google_service_account.simulator.member
 }
 
@@ -80,10 +86,15 @@ resource "google_cloud_run_v2_service" "simulator" {
         value = google_pubsub_topic.telemetry.id
       }
 
+      env {
+        name  = "REPLAY_GCS_PREFIX"
+        value = "gs://${google_storage_bucket.bronze.name}/replay/private/2014"
+      }
+
       resources {
         limits = {
           cpu    = "1"
-          memory = "256Mi"
+          memory = "512Mi"
         }
         cpu_idle = true
       }
@@ -93,13 +104,14 @@ resource "google_cloud_run_v2_service" "simulator" {
   lifecycle {
     precondition {
       condition     = var.simulator_invoker_member != null
-      error_message = "Renseigne simulator_invoker_member pour autoriser le déclenchement authentifié du simulateur."
+      error_message = "Renseigne simulator_invoker_member pour autoriser le déclenchement authentifié du replay."
     }
   }
 
   depends_on = [
     google_project_service.simulator_api["run.googleapis.com"],
     google_pubsub_topic_iam_member.simulator_publisher,
+    google_storage_bucket_iam_member.simulator_replay_reader,
   ]
 }
 
@@ -118,4 +130,8 @@ output "simulator_repository" {
 
 output "simulator_url" {
   value = one(google_cloud_run_v2_service.simulator[*].uri)
+}
+
+output "replay_source_uri" {
+  value = "gs://${google_storage_bucket.bronze.name}/replay/private/2014/"
 }

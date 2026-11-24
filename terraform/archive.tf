@@ -19,7 +19,7 @@ resource "google_storage_bucket" "bronze" {
     }
     condition {
       age                   = 30
-      matches_prefix        = ["iot/"]
+      matches_prefix        = ["streaming/archive/"]
       matches_storage_class = ["STANDARD"]
     }
   }
@@ -30,7 +30,7 @@ resource "google_storage_bucket" "bronze" {
     }
     condition {
       age            = 90
-      matches_prefix = ["iot/"]
+      matches_prefix = ["streaming/archive/"]
     }
   }
 
@@ -49,7 +49,7 @@ resource "google_storage_bucket_iam_member" "pubsub_archive" {
 }
 
 resource "google_pubsub_subscription" "gcs_archive" {
-  name  = "grid-telemetry-archive-sub"
+  name  = "sub-meter-archive"
   topic = google_pubsub_topic.telemetry.id
 
   ack_deadline_seconds       = 60
@@ -61,7 +61,7 @@ resource "google_pubsub_subscription" "gcs_archive" {
 
   cloud_storage_config {
     bucket                   = google_storage_bucket.bronze.name
-    filename_prefix          = "iot/"
+    filename_prefix          = "streaming/archive/"
     filename_datetime_format = "YYYY/MM/DD/hh/mm_ssZ"
     filename_suffix          = ".ndjson"
     max_duration             = "60s"
@@ -79,8 +79,12 @@ resource "google_pubsub_subscription" "gcs_archive" {
     google_pubsub_topic_iam_member.dead_letter_publisher,
     google_pubsub_subscription.dead_letter_reader,
   ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 output "telemetry_archive_uri" {
-  value = "gs://${google_storage_bucket.bronze.name}/iot/"
+  value = "gs://${google_storage_bucket.bronze.name}/streaming/archive/"
 }

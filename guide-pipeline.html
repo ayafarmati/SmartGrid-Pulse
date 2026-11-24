@@ -3,315 +3,74 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SmartGrid Pulse · Guide de la pipeline</title>
+  <title>SmartGrid Pulse Londres — Guide du pipeline</title>
   <style>
-    :root{color-scheme:light;--ink:#172f35;--muted:#486169;--paper:#f0f5f3;--white:#fff;--line:#cbdad6;--teal:#125f53;--red:#a82938;--green:#1a6548;--violet:#633894;--bronze:#f7eadf;--silver:#e8eff7;--gold:#f7efd7}
-    *{box-sizing:border-box}html{scroll-padding-top:1.25rem}body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.62 system-ui,"Segoe UI",sans-serif}
-    a{color:var(--teal);text-decoration-thickness:.08em;text-underline-offset:.18em}a:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #31639b;outline-offset:4px}
-    .wrap{max-width:78rem;margin:auto;padding:0 clamp(1rem,4vw,3rem)}.hero{background:#153b37;color:#fff;padding:clamp(2.5rem,6vw,5rem) 0 2.7rem;border-bottom:5px solid #dfbf76}
-    .hero a{color:#dff3e9}.hero p{max-width:67ch;color:#e1efeb}.eyebrow{color:#d8eadd;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;font-weight:750}
-    h1,h2,h3{line-height:1.17;margin:0 0 .75rem}h1{font-size:clamp(2.5rem,7vw,5.2rem);letter-spacing:-.055em}h2{font-size:clamp(1.65rem,4vw,2.45rem);letter-spacing:-.03em}h3{font-size:1.22rem;margin-top:1.4rem}
-    p,ol,ul{margin:.65rem 0 1rem}ul,ol{padding-inline-start:1.3rem}li+li{margin-top:.35rem}.layout{display:grid;grid-template-columns:13rem minmax(0,1fr);gap:2rem;padding-top:2rem;padding-bottom:3rem}
-    nav{align-self:start;position:sticky;top:1.25rem;border-inline-start:2px solid var(--line);padding-inline-start:1rem}nav a{display:block;margin:.25rem 0;padding:.18rem 0}nav strong{display:block;margin-bottom:.45rem}
-    .section{background:var(--white);border:1px solid var(--line);border-radius:1rem;padding:clamp(1rem,3vw,2rem);margin-bottom:1.2rem}
-    .cards,.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;margin:1rem 0}.card,.flow li{border:1px solid var(--line);border-radius:.7rem;padding:.8rem;background:#f7faf8}
-    .card p,.flow p{margin:.25rem 0 0}.flow{padding:0;list-style:none}.flow li{margin:0}.flow strong,.card strong{display:block}.flow .bronze{background:var(--bronze)}.flow .silver{background:var(--silver)}.flow .gold{background:var(--gold)}
-    .done{color:var(--red);font-weight:750}.todo{color:var(--green);font-weight:750}.partner{color:var(--violet);font-weight:750}
-    .note{border-inline-start:4px solid var(--teal);background:#e8f3ee;padding:.75rem 1rem;border-radius:.35rem;margin:1.1rem 0}.note p{margin:.25rem 0}
-    .path{font-weight:700;color:var(--teal);overflow-wrap:anywhere}small,.muted{color:var(--muted)}.table-wrap{overflow:auto;margin:.8rem 0 1.1rem}table{border-collapse:collapse;width:100%;min-width:30rem;font-size:.94rem}th,td{text-align:left;vertical-align:top;padding:.65rem .75rem;border-bottom:1px solid var(--line)}thead th{background:#e7f0ec}tbody th{white-space:normal}tbody tr:nth-child(even){background:#f7faf9}caption{text-align:left;font-weight:700;margin-bottom:.5rem}
-    code,pre,kbd{font: .92em/1.55 ui-monospace,Consolas,monospace}code{background:#e9f1ed;border-radius:.2rem;padding:.04rem .2rem;overflow-wrap:anywhere}pre{margin:.7rem 0 1.15rem;overflow:auto;padding:1rem;border-radius:.6rem;background:#172d31;color:#edf7f3;tab-size:2}pre code{background:transparent;padding:0;overflow-wrap:normal}
-    details{border-top:1px solid var(--line);padding:.65rem 0}summary{cursor:pointer;font-weight:700;color:var(--teal)}.sources{font-size:.92rem}.skip{position:absolute;left:.5rem;top:.5rem;background:#fff;padding:.5rem;transform:translateY(-150%)}.skip:focus{transform:none}
-    .subnav{display:flex;flex-wrap:wrap;gap:.35rem 1rem;border-bottom:1px solid var(--line);padding-bottom:.8rem;margin-bottom:1rem}.pipeline-figure{margin:1rem 0 1.4rem}.pipeline-figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:.55rem}.pipeline-figure figcaption{margin-top:.45rem;color:var(--muted);font-size:.88rem}
-    @media(max-width:54rem){.layout{grid-template-columns:1fr;gap:1rem}nav{position:static;display:flex;flex-wrap:wrap;gap:.2rem .85rem}nav strong{flex-basis:100%}}
-    @media(max-width:36rem){.flow,.cards{grid-template-columns:1fr}.section{border-radius:.65rem}}
-    @media print{body,.hero,.section{background:#fff;color:#111}.hero p,.hero a,.eyebrow{color:#111}.hero{padding:1rem 0}nav,.skip{display:none}.layout{display:block}.section{padding:1rem;break-inside:auto}pre{color:#111;background:#eee;white-space:pre-wrap}.table-wrap{overflow:visible}}
+    :root { --ink:#143b36; --muted:#526a67; --line:#cbded8; --bronze:#fff1e5; --silver:#eaf3ff; --gold:#fff7d8; --green:#e9f7ee; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.55 Inter,Segoe UI,sans-serif; color:var(--ink); background:#f7fbf9; }
+    main { max-width:1180px; margin:auto; padding:42px 24px 72px; }
+    h1 { font-size:clamp(2rem,5vw,4rem); line-height:1; margin:.2rem 0 1rem; }
+    h2 { margin-top:2.4rem; }
+    .lead { max-width:850px; color:var(--muted); font-size:1.12rem; }
+    .badge { display:inline-block; padding:.3rem .65rem; border-radius:999px; background:#d9f2e4; font-weight:700; }
+    .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin:28px 0; }
+    .card { background:white; border:1px solid var(--line); border-radius:14px; padding:16px; box-shadow:0 5px 18px #173f3510; }
+    .card h3 { margin:.1rem 0 .6rem; }
+    .bronze { background:var(--bronze); } .silver { background:var(--silver); } .gold { background:var(--gold); } .result { background:var(--green); }
+    table { width:100%; border-collapse:collapse; background:white; }
+    th,td { border:1px solid var(--line); padding:10px; text-align:left; vertical-align:top; }
+    code,pre { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+    pre { background:#123a35; color:#effff8; padding:16px; border-radius:12px; overflow:auto; }
+    .warning { border-left:5px solid #c67b00; background:#fff5dd; padding:14px; }
+    @media(max-width:850px){ .flow { grid-template-columns:1fr; } }
   </style>
 </head>
-<body>
-  <a class="skip" href="#contenu">Aller au guide</a>
-  <header class="hero">
-    <div class="wrap">
-      <p class="eyebrow">SmartGrid Pulse · Aya Farmati et Abarkha</p>
-      <h1>Le flux de données,<br>de la source à Looker</h1>
-      <p>Guide de lecture de l’architecture GCP. Suis un relevé de Madrid, vois comment Terraform relie les services, puis distingue l’historisation SCD, les watermarks et le CDC.</p>
-      <p><a href="#looker">Aller au dossier Looker et LookML</a> · <a href="README.md">Ouvrir le guide de déploiement</a></p>
-    </div>
-  </header>
-  <div class="wrap layout">
-    <nav aria-label="Sommaire">
-      <strong>Sommaire</strong>
-      <a href="#architecture">Architecture</a>
-      <a href="#iot">Parcours d’un relevé</a>
-      <a href="#historique">Historique et ML</a>
-      <a href="#terraform">Terraform et technologies</a>
-      <a href="#scd">SCD</a>
-      <a href="#watermark">Watermark</a>
-      <a href="#cdc">CDC</a>
-      <a href="#looker">Looker et LookML</a>
-    </nav>
-    <main id="contenu">
-      <section class="section" id="architecture">
-        <h2>L’architecture et son état</h2>
-        <p>Le projet suit deux flux. La télémétrie simule cinq stations et alimente la supervision. L’historique de charge nationale et de météo alimentera la prévision à court terme. Les deux flux utilisent les mêmes principes de qualité et les trois couches du médaillon.</p>
-        <ol class="flow" aria-label="Les trois couches de données">
-          <li class="bronze"><strong>1. Bronze</strong><p>Conserve les messages bruts et les archives. Les fichiers historiques seront déposés dans un préfixe distinct de <code>iot/</code>.</p></li>
-          <li class="silver"><strong>2. Silver</strong><p>Nettoie, type et dédoublonne. La vue <code>telemetry_clean</code> existe. La préparation de l’historique reste à faire.</p></li>
-          <li class="gold"><strong>3. Gold</strong><p>Expose les faits, dimensions, résultats et vues métier. Looker lit les objets Gold via le modèle LookML.</p></li>
-        </ol>
-        <p class="path">Sources → Ingestion → Bronze → Silver → Gold → Looker / LookML</p>
-        <div class="cards">
-          <div class="card"><strong class="done">Validé par Aya</strong><p>Rapport test Data Studio, archive, DLQ isolée et lectures Cloud Storage et BigQuery depuis Spark.</p></div>
-          <div class="card"><strong class="todo">À poursuivre par Aya</strong><p>Charger ses trois tables Gold, préparer les variables, entraîner et évaluer le modèle, publier et restituer les prévisions.</p></div>
-          <div class="card"><strong class="partner">Périmètre d’Abarkha</strong><p>Sources et ETL historiques, météo, <code>Dim_City</code>, anomalies, alertes et orchestration.</p></div>
-        </div>
-        <p class="note">Looker et LookML font partie de l’architecture cible. La restitution déjà testée a été réalisée dans Data Studio. Les sections SCD, watermark et CDC décrivent des mécanismes d’ingénierie et leur usage possible dans le projet.</p>
-      </section>
+<body><main>
+  <span class="badge">Londres uniquement · europe-west1</span>
+  <h1>SmartGrid Pulse</h1>
+  <p class="lead">Pipeline médaillon pour prévoir la consommation électrique à partir des mesures réelles et anonymisées du projet Low Carbon London. L’historique 2011–2013 sert à l’analyse et à l’apprentissage. Janvier–février 2014 reste isolé et est rejoué via Pub/Sub pour valider le comportement en flux.</p>
 
-      <section class="section" id="iot">
-        <h2>Suivre le relevé de Madrid à 49,7 Hz</h2>
-        <ol>
-          <li><strong>Générer.</strong> Une requête authentifiée sur <code>/simulate</code> déclenche l’application Python dans Cloud Run. L’application produit cinq relevés JSON et donne à chacun un <code>event_id</code>. Le <code>batch_id</code> regroupe les cinq relevés. Le code injecte <code>49.7</code> et <code>UNDER_FREQUENCY</code> pour Madrid dans ce scénario.</li>
-          <li><strong>Publier.</strong> Le code lit la variable <code>PUBSUB_TOPIC</code> et publie sur <code>grid-telemetry-topic</code>. Pub/Sub attribue un <code>message_id</code> à chaque publication. Le compte de service Cloud Run a le droit de publier sur ce topic.</li>
-          <li><strong>Livrer deux copies.</strong> Un abonnement écrit le message brut et ses métadonnées dans <code>bronze_smartgrid.streaming_raw_events</code>. Un autre écrit une ligne JSON par message dans les fichiers NDJSON de Cloud Storage. Les deux abonnements consomment le même topic indépendamment.</li>
-          <li><strong>Nettoyer.</strong> BigQuery Silver lit le JSON, convertit les types, vérifie les champs et les bornes, puis départage les copies par <code>event_id</code>. Le relevé à 49,7 Hz reste recevable dans la plage de qualité 49–51 Hz. Il garde son statut de sous-fréquence.</li>
-          <li><strong>Préparer l’affichage.</strong> La vue Gold <code>telemetry_latest</code> conserve un seul relevé par <code>device_id</code>, ordonné d’abord par heure de mesure. Quand le rapport interroge cette vue, BigQuery exécute aussi la requête Silver. Le test Data Studio a affiché cinq stations.</li>
-        </ol>
-        <details open>
-          <summary>Trois identifiants qui servent à des niveaux différents</summary>
-          <p><code>batch_id</code> regroupe un déclenchement du simulateur. <code>event_id</code> représente la mesure et sert de clé de dédoublonnage. <code>message_id</code> identifie la publication Pub/Sub et aide à suivre sa livraison.</p>
-        </details>
-        <details open>
-          <summary>Qualité d’une mesure et échec de livraison</summary>
-          <p>Le statut <code>UNDER_FREQUENCY</code> décrit la mesure. La DLQ intervient quand un abonnement échoue à livrer un message à répétition. Le mécanisme de redirection a été vérifié lors d’un test isolé. Une alerte ou une notification métier relève d’un autre flux.</p>
-        </details>
-        <p class="sources"><a href="simulator/app.py">Application Python</a> · <a href="terraform/pubsub.tf">Abonnement BigQuery</a> · <a href="terraform/archive.tf">Abonnement Cloud Storage</a> · <a href="terraform/silver.tf">Vue Silver</a> · <a href="terraform/gold_telemetry.tf">Vue Gold</a></p>
-      </section>
-
-      <section class="section" id="historique">
-        <h2>Du fichier historique à la prévision</h2>
-        <p class="path">Fichiers historiques → Cloud Storage Bronze → PySpark sur Dataproc → Silver nettoyée → faits et dimensions Gold → variables SQL → Spark ML → prévisions Gold → Looker</p>
-        <ol>
-          <li><strong>Déposer et nettoyer.</strong> Abarkha prépare les fichiers de charge et de météo. PySpark contrôle les types, les doublons, le fuseau source et les unités. Un contrôle de complétude repère les heures manquantes avant le calcul des variables.</li>
-          <li><strong>Fixer le grain.</strong> <code>Fact_Energy_Load</code> représente une ligne de charge nationale par heure UTC. <code>Fact_Weather_Obs</code> prévoit une ligne par ville et heure. Gold regroupe ces faits et les dimensions. Silver conserve les données nettoyées qui servent à les alimenter.</li>
-          <li><strong>Joindre le calendrier.</strong> Aya utilise <code>Dim_Date</code> et <code>Dim_Time</code> en heure locale <code>Europe/Madrid</code>. <code>timestamp_utc</code> garde l’identité de l’heure. Au passage à l’heure d’hiver, deux heures UTC différentes peuvent partager la même heure affichée localement.</li>
-          <li><strong>Préparer et évaluer.</strong> Les variables utilisent la charge passée et les attributs de calendrier disponibles à l’heure d’émission. Aya compare le modèle <code>GBTRegressor</code> à une référence simple sur une période de test plus récente. La météo pondérée d’Abarkha peut enrichir la première version.</li>
-          <li><strong>Publier.</strong> La cible est <code>Fact_Load_Predictions</code>, avec l’heure d’émission, l’heure cible, l’horizon, la charge prévue en MW et la version du modèle. Looker lira les prévisions et les mesures réelles selon ces clés.</li>
-        </ol>
-        <p class="note">Dataproc a été validé en lecture sur une archive de télémétrie et sur <code>Dim_Date</code>. <code>Dim_Date</code>, <code>Dim_Time</code> et <code>Fact_Energy_Load</code> sont déjà créées en Gold et attendent leur chargement. Le job ETL, l’entraînement et l’écriture des prévisions restent à valider.</p>
-      </section>
-
-      <section class="section" id="terraform">
-        <h2>Terraform et le rôle des technologies</h2>
-        <p>Le <strong>provider Google</strong> traduit les déclarations Terraform en appels GCP. Les références entre ressources transmettent les identifiants et donnent à Terraform un ordre de création. IAM indique <strong>qui</strong> peut effectivement utiliser chaque liaison.</p>
-        <pre><code># Relie un abonnement au topic déclaré dans le même projet Terraform.
-topic = google_pubsub_topic.telemetry.id
-
-# Transmet ce même identifiant à l’application Cloud Run.
-env {
-  name  = "PUBSUB_TOPIC"
-  value = google_pubsub_topic.telemetry.id
-}</code></pre>
-        <p><code>terraform validate</code> vérifie la configuration. <code>terraform plan</code> compare la configuration à l’état du projet et propose des changements. <code>terraform apply</code> les exécute. <code>terraform.tfstate</code> associe les ressources déclarées aux objets GCP réels. Ton état reste privé.</p>
-        <div class="table-wrap" tabindex="0" role="region" aria-label="Technologies et rôles">
-          <table>
-            <thead><tr><th scope="col">Technologie</th><th scope="col">Rôle dans SmartGrid Pulse</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">Python, Docker, Artifact Registry</th><td>Python produit les relevés, Docker emballe le code avec ses dépendances et Artifact Registry stocke l’image utilisée par Cloud Run.</td></tr>
-              <tr><th scope="row">Cloud Run, Pub/Sub</th><td>Exécution à la demande du simulateur et distribution aux abonnements. La DLQ Pub/Sub conserve les échecs répétés de livraison.</td></tr>
-              <tr><th scope="row">Cloud Storage, BigQuery</th><td>Cloud Storage conserve des objets bruts. BigQuery exécute les requêtes SQL et fournit tables partitionnées et vues. Les partitions Bronze réduisent le volume interrogé sur une période.</td></tr>
-              <tr><th scope="row">Dataproc Serverless, PySpark, Spark ML</th><td>Dataproc lance un job Spark. PySpark décrit les transformations, et Spark ML entraîne le modèle de prévision. Le connecteur Spark BigQuery ouvre l’accès aux tables.</td></tr>
-              <tr><th scope="row">IAM, GitHub Actions, WIF</th><td>IAM porte les permissions. GitHub Actions est prévu pour les validations Terraform. WIF pourra fournir une identité temporaire à la CI.</td></tr>
-              <tr><th scope="row">Composer / Airflow</th><td>Orchestration prévue côté Abarkha. Un DAG décrit les tâches, leurs dépendances et leurs reprises sur erreur.</td></tr>
-              <tr><th scope="row">Cloud Logging, Cloud Monitoring</th><td>Logging collecte notamment les journaux des jobs Spark. Monitoring est prévu pour les règles et notifications d’incident.</td></tr>
-              <tr><th scope="row">Vertex AI Model Registry, Dataplex</th><td>Services prévus pour suivre les versions des modèles, cataloguer les données et décrire leur lignage.</td></tr>
-              <tr><th scope="row">Looker et LookML</th><td>Restitution cible directement sur Gold, avec définitions communes des champs et des métriques.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="sources"><a href="README.md">Guide de déploiement</a> · <a href="terraform/main.tf">Provider et API</a> · <a href="terraform/dataproc.tf">API du traitement Spark</a> · <a href="scripts/verify_dataproc_links.py">Test de lecture Spark</a></p>
-      </section>
-
-      <section class="section" id="scd">
-        <h2>SCD · garder l’histoire d’une dimension</h2>
-        <p><strong>Slowly Changing Dimension</strong> désigne une dimension dont certains attributs évoluent au fil du temps. Imagine que le poids démographique de Madrid change. Si on recalcule la météo nationale de l’année précédente, faut-il utiliser le poids de l’époque ou le poids actuel ? La réponse décide du type de SCD.</p>
-        <div class="table-wrap" tabindex="0" role="region" aria-label="Comparaison des types SCD">
-          <table>
-            <thead><tr><th scope="col">Type</th><th scope="col">Règle</th><th scope="col">Exemple</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">SCD 0</th><td>Conserver la valeur initiale.</td><td>Une clé de calendrier dérivée d’une date reste stable.</td></tr>
-              <tr><th scope="row">SCD 1</th><td>Remplacer la valeur dans la ligne existante.</td><td>Corriger une faute dans un nom de ville.</td></tr>
-              <tr><th scope="row">SCD 2</th><td>Fermer l’ancienne version et ajouter une ligne avec une nouvelle clé technique.</td><td>Garder chaque période de validité d’un poids démographique.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="table-wrap" tabindex="0" role="region" aria-label="Exemple SCD 2 pour Madrid">
-          <table>
-            <caption>Exemple fictif SCD 2 avec intervalles [début, fin[</caption>
-            <thead><tr><th scope="col">Clé métier</th><th scope="col">Clé de version</th><th scope="col">Poids</th><th scope="col">Début UTC</th><th scope="col">Fin UTC exclue</th></tr></thead>
-            <tbody>
-              <tr><td>MADRID</td><td>101</td><td>0,29</td><td>2024-01-01</td><td>2025-01-01</td></tr>
-              <tr><td>MADRID</td><td>205</td><td>0,31</td><td>2025-01-01</td><td>NULL</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>Une observation météo de 2024 se joint à la version <code>101</code>. La jointure utilise la clé métier et l’intervalle de validité, ou directement la clé de version si elle a été résolue au chargement du fait. On vérifie l’absence de chevauchement et l’existence d’au plus une version courante par ville. Les dimensions calendrier existent en Gold. L’historisation SCD 2 de la ville est un exemple de conception à discuter avec Abarkha.</p>
-        <p class="sources"><a href="https://learn.microsoft.com/fr-fr/power-bi/guidance/star-schema#slowly-changing-dimensions">Modélisation des dimensions à évolution lente</a></p>
-      </section>
-
-      <section class="section" id="watermark">
-        <h2>Watermark · gérer le retard et la reprise</h2>
-        <p>Dans la télémétrie, <code>event_time</code> désigne l’heure de mesure et <code>publish_time</code> l’heure de publication. Si une mesure de 10 h 01 est publiée à 10 h 12 après un problème réseau, les deux horloges donnent des informations différentes.</p>
-        <h3>Watermark de streaming</h3>
-        <p>Dans un moteur à état comme Spark Structured Streaming, le watermark sert à faire avancer le temps événementiel et à libérer l’état de fenêtres anciennes. Avec une tolérance de <strong>10 min</strong>, si l’heure d’événement maximale observée atteint <strong>10 h 20</strong>, la borne peut avancer vers <strong>10 h 10</strong>. Une mesure horodatée 10 h 15 peut encore participer au calcul selon la fenêtre. Une mesure à 10 h 03 peut être ignorée dans une agrégation dont l’état a été libéré. L’avancement effectif dépend du moteur, des micro-lots et de l’opération.</p>
-        <h3>Point de reprise d’un batch incrémental</h3>
-        <p>On appelle parfois aussi « watermark » le dernier curseur traité avec succès. Pour un futur chargement, on peut conserver une borne de publication et un identifiant de départage. À chaque lot, on lit jusqu’à une borne haute, on fusionne sur une clé stable, puis on avance le curseur après l’écriture réussie. Une fenêtre de recouvrement, rejouée de façon idempotente, peut récupérer des lignes arrivées tardivement.</p>
-        <p class="note">La vue Silver actuelle applique un filtre SQL sur les sept derniers jours de <code>publish_time</code>. C’est une fenêtre de consultation. Elle ne mémorise aucun dernier lot traité et ne gère pas d’état de streaming.</p>
-        <p class="sources"><a href="https://spark.apache.org/docs/latest/streaming/apis-on-dataframes-and-datasets.html#handling-late-data-and-watermarking">Watermarks dans Spark Structured Streaming</a></p>
-      </section>
-
-      <section class="section" id="cdc">
-        <h2>CDC · transmettre les changements d’une source</h2>
-        <p><strong>Change Data Capture</strong> capture les créations, modifications et suppressions d’une table source. Une ingestion CDC transporte la clé de la ligne, son opération et un ordre de changement. Selon la source, ces opérations proviennent par exemple du journal de transactions.</p>
-        <div class="table-wrap" tabindex="0" role="region" aria-label="Exemple pédagogique de changements CDC">
-          <table>
-            <thead><tr><th scope="col">Ordre source</th><th scope="col">Clé</th><th scope="col">Opération</th><th scope="col">Effet sur une copie courante</th></tr></thead>
-            <tbody>
-              <tr><td>120</td><td>ST-05</td><td>INSERT</td><td>Créer la station.</td></tr>
-              <tr><td>121</td><td>ST-05</td><td>UPDATE</td><td>Mettre à jour sa description.</td></tr>
-              <tr><td>122</td><td>ST-05</td><td>DELETE</td><td>Retirer la station de la copie courante.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>En pratique, il faut gérer les doublons, les événements hors ordre, les suppressions et la reprise après incident. Le CDC natif BigQuery utilise la <strong>Storage Write API</strong>, une clé primaire déclarée et <code>_CHANGE_TYPE</code> avec <code>UPSERT</code> ou <code>DELETE</code>. <code>_CHANGE_SEQUENCE_NUMBER</code> permet de fournir un ordre par clé si nécessaire. <a href="https://docs.cloud.google.com/bigquery/docs/change-data-capture">CDC BigQuery</a></p>
-        <p>Dans SmartGrid Pulse, la télémétrie actuelle ajoute une nouvelle mesure à chaque événement. La vue Gold choisit ensuite la dernière mesure disponible. Un futur CDC aurait du sens si une base source publiait les modifications d’un référentiel. Le CDC transporte le changement, le watermark aide à gérer l’avancement et le SCD détermine comment conserver ses versions métier.</p>
-      </section>
-
-      <section class="section" id="looker">
-        <h2>Relier BigQuery Gold à Looker avec LookML</h2>
-        <div class="subnav" aria-label="Sous-sections Looker">
-          <a href="#objets-looker">Objets Looker</a><a href="#exemple-lookml">Exemple LookML</a><a href="#analyse-avancee">Analyse avancée</a><a href="#recette-looker">Validation</a>
-        </div>
-        <p><strong>Looker</strong> interroge BigQuery et présente les résultats. <strong>LookML</strong> est le langage qui décrit les champs, les métriques et les chemins de jointure. Un <strong>Look</strong> est une analyse enregistrée dans Looker. Le modèle de prévision, lui, est entraîné avec Spark ML et publie ses résultats dans Gold. <a href="https://docs.cloud.google.com/looker/docs/lookml-terms-and-concepts">Concepts LookML</a> · <a href="https://docs.cloud.google.com/looker/docs/saving-and-editing-looks">Enregistrer un Look</a></p>
-        <p class="path">BigQuery Gold → Connexion → Modèle LookML → Explore → Look → Tableau de bord</p>
-        <figure class="pipeline-figure">
-          <a href="architecture-smartgrid-pulse-looker.png"><img src="architecture-smartgrid-pulse-looker.png" alt="Architecture SmartGrid Pulse et zoom sur la restitution Looker depuis BigQuery Gold, avec connexion, LookML, Explore, Look et tableau de bord." loading="lazy"></a>
-          <figcaption>Cliquer pour agrandir le schéma. Le rapport Data Studio a déjà été testé. Le zoom Looker présente l’intégration cible.</figcaption>
-        </figure>
-        <h3 id="objets-looker">Ce que fait chaque objet</h3>
-        <div class="table-wrap" tabindex="0" role="region" aria-label="Objets Looker et exemples">
-          <table>
-            <thead><tr><th scope="col">Objet</th><th scope="col">À quoi il sert</th><th scope="col">Application SmartGrid Pulse</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">Connexion BigQuery</th><td>Fixe le dialecte SQL, le projet de facturation et le mode d’authentification. BigQuery exécute la requête générée.</td><td>Créer <code>smartgrid_bigquery</code> et tester l’accès au dataset Gold en <code>europe-west1</code>.</td></tr>
-              <tr><th scope="row">Vue LookML</th><td>Décrit un objet SQL et expose des champs réutilisables. Une dimension sert au filtrage ou au regroupement. Une mesure définit un calcul, par exemple un comptage distinct.</td><td><code>device_id</code>, fréquence en Hz, statut et nombre de stations distinctes.</td></tr>
-              <tr><th scope="row">Modèle LookML et Explore</th><td>Le modèle sélectionne la connexion. Un Explore fournit un point de départ pour choisir les champs et définit les jointures disponibles.</td><td>Un Explore pour les dernières mesures et un autre pour la prévision.</td></tr>
-              <tr><th scope="row">Look et tableau de bord</th><td>Un Look conserve les champs, les filtres, le tri et la visualisation d’une requête. Un tableau de bord regroupe plusieurs analyses et leurs filtres.</td><td>Look « Stations en sous-fréquence », puis tableau de bord qui affiche aussi les mesures et la charge prévue.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <h3 id="exemple-lookml">Premier branchement sur la vue de télémétrie</h3>
-        <ol>
-          <li>Disposer d’une instance Looker et de droits de développement. Configurer une connexion BigQuery nommée <code>smartgrid_bigquery</code> dans Looker. Donner à l’identité de connexion les droits de lecture de la vue et de ses sources, ou autoriser la vue selon la configuration BigQuery, ainsi que le droit d’exécuter des requêtes dans le projet de facturation. <a href="https://docs.cloud.google.com/looker/docs/db-config-google-bigquery">Configurer la connexion BigQuery</a></li>
-          <li>Ajouter au projet LookML une définition de <strong>vue</strong> pour l’objet BigQuery, un <strong>modèle</strong> pour sélectionner la connexion et un <strong>Explore</strong> pour permettre la consultation.</li>
-          <li>Valider LookML dans l’instance, ouvrir l’Explore et contrôler que chaque station apparaît au plus une fois. Créer ensuite l’Explore de prévision sur les résultats Gold dès que la table existe.</li>
-        </ol>
-        <h3>Exemple de vue · <code>telemetry_latest.view.lkml</code></h3>
-        <pre><code>view: telemetry_latest {
-  sql_table_name: &#96;smartgrid-pulse.gold_smartgrid.telemetry_latest&#96; ;;
-
-  dimension: device_id {
-    primary_key: yes
-    type: string
-    sql: ${TABLE}.device_id ;;
-  }
-
-  dimension_group: measured_at {
-    type: time
-    timeframes: [raw, time, date]
-    sql: ${TABLE}.event_time ;;
-  }
-
-  dimension: grid_status {
-    type: string
-    sql: ${TABLE}.grid_status ;;
-  }
-
-  dimension: is_alert {
-    type: yesno
-    sql: ${TABLE}.is_alert ;;
-  }
-
-  dimension: frequency_hz {
-    type: number
-    sql: ${TABLE}.frequency_hz ;;
-  }
-
-  measure: stations_count {
-    type: count_distinct
-    sql: ${device_id} ;;
-  }
-
-  measure: stations_in_alert {
-    type: count_distinct
-    sql: ${device_id} ;;
-    filters: [is_alert: "yes"]
-  }
-}</code></pre>
-        <h3>Exemple de modèle · <code>smartgrid.model.lkml</code></h3>
-        <pre><code>connection: "smartgrid_bigquery"
-include: "/telemetry_latest.view.lkml"
-
-explore: telemetry_latest {
-  label: "Dernières mesures par station"
-}</code></pre>
-        <p>Dans l’Explore, sélectionne la station, l’heure de mesure, la fréquence et le statut. Filtre sur <code>UNDER_FREQUENCY</code> et enregistre le Look « Stations en sous-fréquence ». Si le lot testé est encore visible sur la fenêtre de sept jours, la station en sous-fréquence est Madrid à 49,7 Hz. Pour un KPI séparé, sélectionne les mesures de comptage sans dimension de station et laisse le filtre d’alerte dans la mesure <code>stations_in_alert</code>. Ainsi, le compteur total couvre toutes les stations et le compteur filtré couvre les alertes.</p>
-        <p class="sources"><a href="https://docs.cloud.google.com/looker/docs/reference/param-view-sql-table-name">Référence de la vue LookML</a> · <a href="https://docs.cloud.google.com/looker/docs/reference/param-field-filters">Filtres dans une mesure LookML</a></p>
-        <h3 id="analyse-avancee">Modéliser la prévision pour l’analyse avancée</h3>
-        <p>Un analyste doit pouvoir répondre à la question « la prévision de la veille à 24 h a-t-elle sous-estimé la pointe du soir ? ». Pour cela, le modèle doit préserver <strong>l’heure cible en UTC</strong>, <strong>l’heure d’émission</strong> et <strong>l’horizon</strong>.</p>
-        <div class="table-wrap" tabindex="0" role="region" aria-label="Pratiques avancées pour analyser les prévisions">
-          <table>
-            <thead><tr><th scope="col">Sujet</th><th scope="col">Règle pour l’Explore de prévision</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">Grain et clé primaire</th><td>Une prévision par couple émission–cible et par version de modèle pour la série nationale. Créer une clé stable sur ces champs et tester son unicité avant de la déclarer <code>primary_key: yes</code>. Le fait de charge doit avoir une seule ligne par heure UTC.</td></tr>
-              <tr><th scope="row">Jointure et fan-out</th><td>Depuis les prévisions, joindre la charge réelle sur l’heure cible UTC. La relation attendue est <code>many_to_one</code>. Partir des prévisions et faire une jointure gauche conserve les heures futures. Un fan-out survient quand une jointure multiplie des lignes, par exemple avec plusieurs prévisions pour la même heure réelle. Déclarer la relation et les clés exactes pour que Looker puisse calculer correctement les agrégats. <a href="https://docs.cloud.google.com/looker/docs/best-practices/understanding-symmetric-aggregates">Agrégats symétriques</a></td></tr>
-              <tr><th scope="row">Filtres métier</th><td>Pour comparer deux courbes, fixer une version et un horizon, par exemple T+24. Pour explorer un épisode, filtrer la période et utiliser l’heure cible comme axe. Garder l’émission UTC, le modèle et l’écart en MW dans le détail.</td></tr>
-              <tr><th scope="row">MAE et MAPE</th><td>Sur les lignes avec mesure réelle, calculer <code>AVG(ABS(prévu − réel))</code> en MW. Pour la MAPE, moyenner <code>ABS(prévu − réel) / ABS(réel)</code> lorsque le réel est non nul, puis multiplier par 100. Afficher le nombre de paires évaluées et comparer à une référence saisonnière sur le même ensemble de cibles et le même horizon.</td></tr>
-              <tr><th scope="row">Unités</th><td>La fréquence s’affiche en Hz et la charge en MW. Une somme de mesures en MW au fil du temps ne représente pas directement de l’énergie. Pour des puissances moyennes horaires, l’énergie en MWh s’obtient en multipliant chaque valeur par la durée en heures avant d’additionner.</td></tr>
-              <tr><th scope="row">Volume BigQuery</th><td>La table de charge exige un filtre de partition sur <code>timestamp_utc</code>. Prévoir un chemin SQL qui applique une période bornée directement au fait et vérifier le SQL généré, y compris lorsqu’une jointure est sollicitée. Mesurer les octets avant de publier le tableau de bord. <a href="https://docs.cloud.google.com/bigquery/docs/querying-partitioned-tables#require_a_partition_filter_in_queries">Filtres de partition</a></td></tr>
-              <tr><th scope="row">Fraîcheur et cache</th><td>Afficher l’heure de la mesure pour la télémétrie et l’heure d’émission pour les prévisions. Une politique <code>datagroup</code> avec <code>persist_with</code> peut aligner le cache sur la disponibilité des données. Pour un futur batch, un identifiant de lot publié après succès est un meilleur déclencheur qu’un rafraîchissement fréquent à l’aveugle. <a href="https://docs.cloud.google.com/looker/docs/caching-and-datagroups">Cache Looker et datagroups</a></td></tr>
-              <tr><th scope="row">Accès et qualité</th><td>Séparer les droits de lecture BigQuery, d’utilisation de l’Explore et de modification des tableaux de bord. Si les équipes doivent être limitées à certaines stations, prévoir des attributs utilisateur et un <code>access_filter</code> sur le champ concerné, puis tester avec un compte restreint. <a href="https://docs.cloud.google.com/looker/docs/reference/param-explore-access-filter">Filtrage par utilisateur</a></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <details>
-          <summary>Exemple cible de jointure LookML pour la charge réelle</summary>
-          <p>Ce fragment suppose deux vues LookML à créer. <code>forecast_runs</code> expose <code>target_hour_raw</code> et <code>actual_load_hourly</code> expose <code>observed_hour_raw</code> et impose une période de lecture sur le fait partitionné. Les champs bruts préservent l’alignement des timestamps UTC.</p>
-          <pre><code>explore: forecast_runs {
-  join: actual_load_hourly {
-    type: left_outer
-    relationship: many_to_one
-    sql_on: ${forecast_runs.target_hour_raw}
-          = ${actual_load_hourly.observed_hour_raw} ;;
-  }
-}</code></pre>
-          <p>Par exemple, une prévision T+1 et une prévision T+24 peuvent viser la même heure. Les deux trouvent la même observation réelle. Si on affiche la courbe sans sélectionner un horizon et une version, on mélange plusieurs prévisions pour une même cible. <a href="https://docs.cloud.google.com/looker/docs/reference/param-explore-join-relationship">Cardinalité des jointures LookML</a></p>
-        </details>
-        <h3>Trois Looks pour la page de prévision d’Aya</h3>
-        <ul>
-          <li><strong>Charge réelle et prévue.</strong> Deux courbes par heure cible, avec filtres de période, horizon et version. Les valeurs réelles futures restent absentes jusqu’à leur réception.</li>
-          <li><strong>Erreur par horizon.</strong> MAE, MAPE et nombre de paires évaluées pour T+1 à T+24, avec comparaison à la référence.</li>
-          <li><strong>Pointes sous-estimées.</strong> Lignes horodatées, charge réelle, charge prévue et écart signé. Pour repérer les sous-estimations, calculer <code>réel − prévu</code> et trier les écarts positifs les plus élevés.</li>
-        </ul>
-        <h3 id="recette-looker">Vérifier avant de publier</h3>
-        <ol>
-          <li>Dans le mode développement de Looker, valider le modèle et ouvrir l’Explore. Vérifier que le SQL généré cible le projet et le dataset attendus.</li>
-          <li>Comparer les résultats de télémétrie à une requête directe dans BigQuery et tester l’unicité de <code>device_id</code>.</li>
-          <li>Quand l’extrait de charge et les prévisions seront disponibles, vérifier l’unicité des clés, rapprocher les totaux, tester la jointure sur un exemple avec plusieurs horizons et contrôler le filtre de partition.</li>
-          <li>Vérifier les rôles de lecture et le coût estimé des requêtes, puis publier le modèle et les Looks destinés à la démonstration.</li>
-        </ol>
-        <p class="note">Les extraits LookML ciblent une vue Gold déjà déployée. La connexion, la validation LookML et l’Explore restent à tester sur une instance Looker. L’Explore de prévision dépend des futurs résultats Gold. Le rapport Data Studio existant atteste déjà que la vue de télémétrie est lisible.</p>
-      </section>
-    </main>
+  <h2>Flux de bout en bout</h2>
+  <div class="flow">
+    <section class="card"><h3>Sources</h3><p>Blocs demi-horaires, métadonnées des compteurs, météo Londres et jours fériés britanniques.</p></section>
+    <section class="card bronze"><h3>Bronze</h3><p>CSV historiques immuables, archive NDJSON du replay et enveloppe Pub/Sub brute dans BigQuery.</p></section>
+    <section class="card silver"><h3>Silver</h3><p>Types normalisés, contrôles qualité, déduplication par <code>event_id</code> et conservation du temps de l’événement.</p></section>
+    <section class="card gold"><h3>Gold</h3><p>Dimensions Date, Time, Meter et Virtual Group ; faits Energy Load, Weather, Predictions et Anomalies.</p></section>
+    <section class="card result"><h3>Restitution</h3><p>Prévisions Spark ML, suivi du replay et analyses Looker/LookML.</p></section>
   </div>
-</body>
+
+  <h2>Contrat du message de replay</h2>
+  <pre>{
+  "event_id": "UUID déterministe",
+  "meter_id": "MAC000002",
+  "virtual_group_id": "LONDON-GROUP-03",
+  "event_time": "2014-01-01T00:30:00Z",
+  "ingestion_time": "heure réelle de publication",
+  "energy_kwh": 0.184,
+  "source": "STREAM_REPLAY",
+  "schema_version": "1.0"
+}</pre>
+  <p><code>event_time</code> représente la mesure historique. <code>ingestion_time</code> représente son arrivée actuelle dans la plateforme. Cette séparation permet de mesurer le retard et d’utiliser un watermark sans falsifier la chronologie.</p>
+
+  <h2>Notions Data Engineering</h2>
+  <table>
+    <thead><tr><th>Notion</th><th>Application dans le projet</th></tr></thead>
+    <tbody>
+      <tr><td>Grain</td><td>Une ligne de <code>Fact_Energy_Load</code> = un compteur, un créneau de 30 minutes et une source.</td></tr>
+      <tr><td>Déduplication</td><td><code>event_id</code> est construit à partir de <code>meter_id + event_time</code>. Un replay identique ne crée pas un nouvel événement métier.</td></tr>
+      <tr><td>Watermark</td><td>Le traitement accepte un retard défini à partir de <code>event_time</code>, tout en suivant l’arrivée avec <code>ingestion_time</code>.</td></tr>
+      <tr><td>CDC</td><td>Les sources sont des relevés append-only. Les changements de métadonnées sont traités séparément dans <code>Dim_Meter</code>.</td></tr>
+      <tr><td>SCD Type 2</td><td><code>Dim_Meter</code> conserve <code>effective_from</code>, <code>effective_to</code> et <code>is_current</code> pour garder l’historique des attributs.</td></tr>
+      <tr><td>Fuite de données</td><td>Les mois 2014 ne participent jamais à l’entraînement ; ils servent au replay et à l’évaluation finale.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Répartition</h2>
+  <table>
+    <thead><tr><th>Abarkha</th><th>Aya</th><th>Partagé</th></tr></thead>
+    <tbody><tr><td>Historique, météo, ETL PySpark, qualité et anomalies historiques.</td><td>Replay 2014, Pub/Sub, Cloud Run, Bronze/Silver streaming, Gold, ML et Looker.</td><td>Contrats, tests de bout en bout, métriques, lineage et démonstration.</td></tr></tbody>
+  </table>
+
+  <p class="warning"><strong>Important :</strong> les cinq groupes sont des groupes virtuels déterministes, pas des boroughs ni de véritables sous-stations. Le dataset ne fournit pas une localisation assez précise pour faire cette attribution.</p>
+</main></body>
 </html>
