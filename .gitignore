@@ -6,19 +6,3 @@
 *.tfvars.json
 __pycache__/
 *.py[cod]
-
-# External London datasets and generated partitions are never committed.
-data/raw/*
-data/processed/*
-data/replay/*
-data/checkpoints/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-!data/replay/.gitkeep
-!data/checkpoints/.gitkeep
-
-# Local credentials and environment files.
-kaggle.json
-.env
-.env.*
-!.env.example
