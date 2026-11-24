@@ -15,7 +15,16 @@ resource "google_pubsub_subscription" "bigquery" {
     write_metadata = true
   }
 
-  depends_on = [google_bigquery_table_iam_member.pubsub_writer]
+  dead_letter_policy {
+    dead_letter_topic     = google_pubsub_topic.dead_letter.id
+    max_delivery_attempts = 5
+  }
+
+  depends_on = [
+    google_bigquery_table_iam_member.pubsub_writer,
+    google_pubsub_topic_iam_member.dead_letter_publisher,
+    google_pubsub_subscription.dead_letter_reader,
+  ]
 }
 
 output "telemetry_topic" {

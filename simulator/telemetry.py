@@ -21,6 +21,7 @@ ANOMALIES = {
     "surtension": ("voltage_kv", 425.0, "OVERVOLTAGE"),
     "surchauffe": ("transformer_temp_c", 90.0, "OVERHEAT"),
 }
+SCENARIOS = ("normal", *ANOMALIES)
 
 
 def generate_telemetry(device_id, nominal_mw, scenario="normal"):
@@ -57,7 +58,7 @@ def generate_batch(scenario="normal"):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Générer cinq relevés SmartGrid Pulse en JSON.")
-    parser.add_argument("--scenario", choices=("normal", *ANOMALIES), default="normal")
+    parser.add_argument("--scenario", choices=SCENARIOS, default="normal")
     args = parser.parse_args()
 
     for event in generate_batch(args.scenario):
