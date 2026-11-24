@@ -1,65 +1,49 @@
-DECLARE start_date DATE DEFAULT DATE '2011-11-01';
-DECLARE end_date DATE DEFAULT DATE '2014-02-28';
-
-MERGE `smartgrid-pulse.gold_smartgrid.Dim_Date` AS target
+-- Paramètres DATE : @start_date et @end_date, bornes incluses.
+MERGE `gold_smartgrid.Dim_Date` AS target
 USING (
   SELECT
-    CAST(FORMAT_DATE('%Y%m%d', calendar_date) AS INT64) AS date_key,
-    calendar_date AS full_date,
-    EXTRACT(YEAR FROM calendar_date) AS year,
-    EXTRACT(QUARTER FROM calendar_date) AS quarter,
-    EXTRACT(MONTH FROM calendar_date) AS month,
-    EXTRACT(ISOWEEK FROM calendar_date) AS iso_week,
-    EXTRACT(DAY FROM calendar_date) AS day_of_month,
-    MOD(EXTRACT(DAYOFWEEK FROM calendar_date) + 5, 7) + 1 AS day_of_week,
-    EXTRACT(DAYOFWEEK FROM calendar_date) IN (1, 7) AS is_weekend,
-    CAST(NULL AS BOOL) AS is_holiday_uk,
-    CAST(NULL AS STRING) AS holiday_name
-  FROM UNNEST(GENERATE_DATE_ARRAY(start_date, end_date)) AS calendar_date
-) AS source
-ON target.date_key = source.date_key
-WHEN MATCHED THEN UPDATE SET
-  full_date = source.full_date,
-  year = source.year,
-  quarter = source.quarter,
-  month = source.month,
-  iso_week = source.iso_week,
-  day_of_month = source.day_of_month,
-  day_of_week = source.day_of_week,
-  is_weekend = source.is_weekend
-WHEN NOT MATCHED THEN INSERT ROW;
+    CAST(FORMAT_DATE('%Y%m%d', full_date) AS INT64) AS date_key,
+    full_date,
+    EXTRACT(YEAR FROM full_date) AS year,
+    EXTRACT(MONTH FROM full_date) AS month,
+    ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août',
+     'septembre', 'octobre', 'novembre', 'décembre'][OFFSET(EXTRACT(MONTH FROM full_date) - 1)] AS month_name,
+    EXTRACT(DAY FROM full_date) AS day,
+    MOD(EXTRACT(DAYOFWEEK FROM full_date) + 5, 7) + 1 AS day_of_week,
+    EXTRACT(DAYOFWEEK FROM full_date) IN (1, 7) AS is_weekend,
+    CASE
+      WHEN EXTRACT(MONTH FROM full_date) IN (12, 1, 2) THEN 'Hiver'
+      WHEN EXTRACT(MONTH FROM full_date) IN (3, 4, 5) THEN 'Printemps'
+      WHEN EXTRACT(MONTH FROM full_date) IN (6, 7, 8) THEN 'Été'
+      ELSE 'Automne'
+    END AS season
+  FROM UNNEST(GENERATE_DATE_ARRAY(@start_date, @end_date)) AS full_date
+) AS calendar
+ON target.date_key = calendar.date_key
+WHEN NOT MATCHED THEN
+  INSERT (date_key, full_date, year, month, month_name, day, day_of_week, is_weekend, season)
+  VALUES (calendar.date_key, calendar.full_date, calendar.year, calendar.month, calendar.month_name,
+          calendar.day, calendar.day_of_week, calendar.is_weekend, calendar.season);
 
-MERGE `smartgrid-pulse.gold_smartgrid.Dim_Time` AS target
+MERGE `gold_smartgrid.Dim_Time` AS target
 USING (
   SELECT
-    hour_value * 100 + minute_value AS time_key,
-    hour_value * 2 + DIV(minute_value, 30) AS interval_index,
-    hour_value AS hour,
-    minute_value AS minute,
-    FORMAT('%02d:%02d', hour_value, minute_value) AS time_label
-  FROM UNNEST(GENERATE_ARRAY(0, 23)) AS hour_value
-  CROSS JOIN UNNEST([0, 30]) AS minute_value
-) AS source
-ON target.time_key = source.time_key
-WHEN MATCHED THEN UPDATE SET
-  interval_index = source.interval_index,
-  hour = source.hour,
-  minute = source.minute,
-  time_label = source.time_label
-WHEN NOT MATCHED THEN INSERT ROW;
-
-MERGE `smartgrid-pulse.gold_smartgrid.Dim_Virtual_Group` AS target
-USING (
-  SELECT
-    FORMAT('LONDON-GROUP-%02d', group_number) AS virtual_group_id,
-    FORMAT('Groupe virtuel Londres %02d', group_number) AS group_label,
-    group_number,
-    'SHA256(meter_id) modulo 5' AS grouping_rule
-  FROM UNNEST(GENERATE_ARRAY(1, 5)) AS group_number
-) AS source
-ON target.virtual_group_id = source.virtual_group_id
-WHEN MATCHED THEN UPDATE SET
-  group_label = source.group_label,
-  group_number = source.group_number,
-  grouping_rule = source.grouping_rule
-WHEN NOT MATCHED THEN INSERT ROW;
+    hour_24 * 100 + minute AS time_key,
+    hour_24,
+    minute,
+    CASE
+      WHEN hour_24 < 6 THEN 'Nuit'
+      WHEN hour_24 < 12 THEN 'Matin'
+      WHEN hour_24 < 18 THEN 'Après-midi'
+      ELSE 'Soir'
+    END AS period_of_day,
+    ((hour_24 >= 8 AND hour_24 < 12) OR (hour_24 >= 18 AND hour_24 < 22)) AS is_peak_hour
+  FROM (
+    SELECT DIV(minute_of_day, 60) AS hour_24, MOD(minute_of_day, 60) AS minute
+    FROM UNNEST(GENERATE_ARRAY(0, 1439)) AS minute_of_day
+  )
+) AS clock
+ON target.time_key = clock.time_key
+WHEN NOT MATCHED THEN
+  INSERT (time_key, hour_24, minute, period_of_day, is_peak_hour)
+  VALUES (clock.time_key, clock.hour_24, clock.minute, clock.period_of_day, clock.is_peak_hour);

@@ -1,15 +1,11 @@
 resource "google_pubsub_topic" "telemetry" {
-  name = "smart-meter-events"
-
-  lifecycle {
-    create_before_destroy = true
-  }
+  name = "grid-telemetry-topic"
 
   depends_on = [google_project_service_identity.pubsub]
 }
 
 resource "google_pubsub_subscription" "bigquery" {
-  name  = "sub-meter-bigquery"
+  name  = "grid-telemetry-bigquery-sub"
   topic = google_pubsub_topic.telemetry.id
 
   message_retention_duration = "86400s"
@@ -29,10 +25,6 @@ resource "google_pubsub_subscription" "bigquery" {
     google_pubsub_topic_iam_member.dead_letter_publisher,
     google_pubsub_subscription.dead_letter_reader,
   ]
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 output "telemetry_topic" {

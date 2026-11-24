@@ -97,7 +97,7 @@ L’infrastructure cible reste en `europe-west1` et utilise Cloud Storage, Datap
 | Personne | Responsabilités |
 | --- | --- |
 | **Abarkha** | Sources historiques, météo, métadonnées, ETL PySpark, qualité, anomalies historiques, préparation du jeu d’entraînement, règles d’alerte et analyse de supervision |
-| **Aya** | Séparation et isolation du replay 2014, replay Python, Cloud Run, Pub/Sub, Bronze/Silver streaming, DLQ, Logging, Monitoring, Gold de charge, modèle Spark ML, scoring, Looker/LookML |
+| **Aya** | Séparation et isolation du replay 2014, simulateur Python, Cloud Run Job, Pub/Sub, Bronze/Silver streaming, DLQ, Logging, Monitoring, Gold de charge, modèle Spark ML, scoring, Looker/LookML |
 | **Partagé** | Contrat des tables, tests de bout en bout, validation des métriques, documentation, lineage et démonstration finale |
 
 Abarkha remet à Aya :
@@ -260,12 +260,12 @@ Le modèle LookML part de `Fact_Load_Predictions` et utilise des relations `many
 | Composant | État | Action |
 | --- | --- | --- |
 | Terraform, IAM, Artifact Registry | Socle existant | Conserver et adapter les droits |
-| Pub/Sub, archive GCS et DLQ | Code adapté au schéma Londres | Valider le plan Terraform puis migrer sans perte |
-| Replay Python | Lecteur CSV Londres et contrat d’événement implémentés | Tester avec l’extrait réel 2014 |
-| Cloud Run | Service de replay adapté | Construire l’image puis tester `/replay` avec GCS |
+| Pub/Sub, archive GCS et DLQ | Validés sur l’ancien schéma | Renommer et adapter au message Londres |
+| Simulateur Python | Ancienne génération artificielle | Remplacer par le lecteur/replay 2014 |
+| Cloud Run | Service existant | Ajouter un Cloud Run Job pour le replay |
 | Dataproc Serverless | Connectivité validée | Implémenter l’ETL 2011–2013 |
-| BigQuery Bronze/Silver | Code Londres prêt | Valider puis appliquer depuis le state Cloud Shell |
-| BigQuery Gold | Dimensions et faits Londres définis | Valider la migration des anciennes tables vides |
+| BigQuery Bronze/Silver | Ancien schéma IoT | Adapter aux compteurs londoniens |
+| BigQuery Gold | Structures partielles | Créer les nouvelles dimensions et faits |
 | Spark ML / Model Registry | Cible | Entraîner et versionner le modèle |
 | Data Studio | Rapport technique validé | Remplacer par les indicateurs Londres |
 | Looker/LookML | Cible | Créer les Explores et le dashboard final |
@@ -275,9 +275,7 @@ Le modèle LookML part de `Fact_Load_Predictions` et utilise des relations `many
 ```text
 smartgrid-pulse/
 ├── terraform/       infrastructure GCP
-├── simulator/       service de replay des mesures Londres 2014
-├── tests/           tests unitaires du contrat d’événement
-├── data/            structure locale; données volumineuses ignorées par Git
+├── simulator/       service actuel à transformer en replay 2014
 ├── scripts/         recettes et contrôles techniques
 ├── sql/             initialisation et transformations BigQuery
 ├── docs/            guide PDF de référence
@@ -290,12 +288,12 @@ smartgrid-pulse/
 2. mesurer la couverture réelle par compteur et par année ;
 3. séparer physiquement 2011–2013 et 2014 ;
 4. créer les cinq groupes virtuels ;
-5. valider dans Cloud Shell le Terraform Londres déjà préparé ;
-6. adapter le batch PySpark historique ;
-7. charger les dimensions et faits Gold ;
-8. entraîner et versionner le premier modèle ;
-9. tester le replay Python avec l’extrait réel 2014 ;
-10. ajouter le scoring, Looker/LookML et la recette de bout en bout.
+5. adapter le batch PySpark et les tables Silver/Gold ;
+6. entraîner et versionner le premier modèle ;
+7. remplacer le simulateur artificiel par le replay Python ;
+8. adapter Pub/Sub, BigQuery et l’archive GCS ;
+9. ajouter le scoring pendant le replay ;
+10. construire Looker/LookML et tester le flux complet.
 
 ## Validation Terraform
 

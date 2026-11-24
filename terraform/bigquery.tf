@@ -1,7 +1,7 @@
 resource "google_bigquery_dataset" "bronze" {
   dataset_id  = "bronze_smartgrid"
   location    = var.region
-  description = "Couche Bronze des événements de compteurs intelligents de Londres."
+  description = "Couche Bronze de la télémétrie SmartGrid Pulse."
 
   depends_on = [google_project_service.api["bigquery.googleapis.com"]]
 }
@@ -14,7 +14,7 @@ resource "google_bigquery_table" "streaming_raw_events" {
   time_partitioning {
     type          = "DAY"
     field         = "publish_time"
-    expiration_ms = 2592000000 # Trente jours; l'archive GCS conserve la source brute.
+    expiration_ms = 604800000 # Sept jours pour les messages de développement.
   }
 
   schema = jsonencode([

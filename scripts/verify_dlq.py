@@ -84,7 +84,7 @@ def smoke_test(project):
     test_id = f"grid-dlq-test-{uuid4().hex[:12]}"
     prefix = f"projects/{project}"
     topic = f"{prefix}/topics/{test_id}"
-    dlq = f"{prefix}/topics/smart-meter-dlq"
+    dlq = f"{prefix}/topics/grid-telemetry-dlq"
     source_name = f"{test_id}-source"
     source = f"{prefix}/subscriptions/{source_name}"
     reader = f"{prefix}/subscriptions/{test_id}-reader"
