@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartGrid Pulse — Plan d'action : quoi faire maintenant</title>
+  <style>
+    :root {
+      --ink: #15343a;
+      --muted: #546d73;
+      --line: #c9dcd7;
+      --paper: #f6faf9;
+      --white: #ffffff;
+      --green: #19844f;
+      --green-bg: #e7f6ee;
+      --purple: #7a35c9;
+      --purple-bg: #f3ebfc;
+      --red: #c93232;
+      --red-bg: #fdeeee;
+      --amber: #b86e00;
+      --amber-bg: #fff5e0;
+      --blue: #1a66cc;
+      --blue-bg: #eaf2ff;
+      --gray: #5f716e;
+      --gray-bg: #eef3f2;
+      --shadow: 0 8px 24px rgba(21, 52, 58, 0.07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.58 "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: .45;
+      background-image: linear-gradient(#e4eeec 1px, transparent 1px), linear-gradient(90deg, #e4eeec 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 26px 22px 60px; }
+
+    /* Hero */
+    header.hero {
+      background: linear-gradient(135deg, #103238 0%, #164b43 60%, #1b6553 100%);
+      color: #fff;
+      border-radius: 22px;
+      padding: 32px 34px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    header.hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(125, 226, 177, 0.22), transparent 70%);
+      pointer-events: none;
+    }
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #9be4c1;
+    }
+    h1 {
+      margin: 8px 0 10px;
+      font-size: clamp(28px, 4.2vw, 46px);
+      line-height: 1.08;
+      letter-spacing: -.03em;
+    }
+    .hero p.lead {
+      margin: 0;
+      max-width: 820px;
+      color: #dceee8;
+      font-size: 16.5px;
+    }
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .hero-links a {
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.24);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 650;
+      transition: background .15s;
+    }
+    .hero-links a:hover { background: rgba(255,255,255,.22); }
+
+    /* Sticky toolbar */
+    .toolbar {
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+    .filters { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+    .filter-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .filter-btn:hover { background: var(--gray-bg); }
+    .filter-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .filter-btn[data-filter="aya"].active { background: var(--green); border-color: var(--green); }
+    .filter-btn[data-filter="abarkha"].active { background: var(--purple); border-color: var(--purple); }
+    .filter-btn[data-filter="shared"].active { background: var(--gray); border-color: var(--gray); }
+
+    .progress-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 230px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 10px;
+      background: #e4efec;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #19844f, #2bb673);
+      transition: width .25s ease;
+    }
+    .progress-text { font-weight: 800; font-size: 13px; color: var(--green); white-space: nowrap; }
+
+    /* KPI Strip */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .kpi {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--green);
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+    }
+    .kpi.red { border-top-color: var(--red); }
+    .kpi.amber { border-top-color: var(--amber); }
+    .kpi.purple { border-top-color: var(--purple); }
+    .kpi.blue { border-top-color: var(--blue); }
+    .kpi-label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; color: var(--muted); }
+    .kpi-val { font-size: 24px; font-weight: 800; margin: 4px 0 4px; color: var(--ink); }
+    .kpi-sub { font-size: 13px; color: var(--muted); margin: 0; }
+
+    /* Sections */
+    section.card-section {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px 26px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow);
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      letter-spacing: -.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h3 { margin: 0 0 8px; font-size: 17px; }
+    p { margin: 6px 0 10px; }
+
+    /* Status grid */
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .status-col {
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid var(--line);
+    }
+    .status-col.done { background: #fdf5f5; border-color: #f0c9c9; }
+    .status-col.local { background: #fffaf0; border-color: #f1dba8; }
+    .status-col.todo { background: #f2fbf6; border-color: #bfe4cf; }
+    .status-col h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; margin-bottom: 10px; }
+    .status-col ul { margin: 0; padding-left: 18px; }
+    .status-col li { margin-bottom: 6px; font-size: 14px; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .b-aya { background: var(--green-bg); color: var(--green); }
+    .b-abarkha { background: var(--purple-bg); color: var(--purple); }
+    .b-shared { background: var(--gray-bg); color: var(--gray); }
+    .b-now { background: var(--red-bg); color: var(--red); }
+    .b-next { background: var(--amber-bg); color: var(--amber); }
+    .b-later { background: var(--blue-bg); color: var(--blue); }
+
+    /* Step cards */
+    .step-card {
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--green);
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      background: #fcfefd;
+      transition: opacity .2s, transform .2s;
+    }
+    .step-card[data-owner="abarkha"] { border-left-color: var(--purple); }
+    .step-card[data-owner="shared"] { border-left-color: var(--gray); }
+    .step-card.hidden-by-filter { display: none; }
+
+    .step-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .step-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .step-num {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .step-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    .step-why {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0 0 12px;
+      padding-left: 40px;
+    }
+
+    /* Checklist inside steps */
+    .task-list {
+      list-style: none;
+      margin: 0 0 12px;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1px solid #dbe9e5;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .task-item:hover { background: #f4faf8; border-color: #a8cfc4; }
+    .task-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--green);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .task-item.checked {
+      background: #f0f7f3;
+      border-color: #b7dfc9;
+      opacity: .78;
+    }
+    .task-item.checked .task-text { text-decoration: line-through; color: var(--muted); }
+    .task-text { font-size: 14.5px; }
+
+    /* Code blocks with copy */
+    .code-wrap { position: relative; margin-top: 10px; }
+    pre {
+      margin: 0;
+      padding: 14px 16px;
+      padding-right: 78px;
+      border-radius: 12px;
+      background: #102a30;
+      color: #e4f6ef;
+      overflow-x: auto;
+      font: 13px/1.55 Consolas, "Cascadia Code", monospace;
+    }
+    code {
+      font-family: Consolas, "Cascadia Code", monospace;
+      background: #e9f2ef;
+      padding: 1px 5px;
+      border-radius: 5px;
+      font-size: .92em;
+    }
+    pre code { background: transparent; padding: 0; font-size: inherit; }
+    .copy-btn {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.1);
+      color: #fff;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,.22); }
+
+    /* Callouts */
+    .callout {
+      padding: 14px 16px;
+      border-radius: 12px;
+      border-left: 5px solid var(--amber);
+      background: var(--amber-bg);
+      font-size: 14px;
+      margin-top: 12px;
+    }
+    .callout.green { border-left-color: var(--green); background: var(--green-bg); }
+    .callout.red { border-left-color: var(--red); background: var(--red-bg); }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 14px;
+    }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #e1ece9; text-align: left; vertical-align: top; }
+    th { background: #144d46; color: #fff; font-weight: 700; }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) { background: #f7fbfa; }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 960px) {
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .status-grid { grid-template-columns: 1fr; }
+      .step-why { padding-left: 0; }
+    }
+    @media (max-width: 560px) {
+      .kpis { grid-template-columns: 1fr; }
+      header.hero { padding: 24px 20px; }
+    }
+    @media print {
+      .toolbar, .copy-btn { display: none !important; }
+      body { background: #fff; }
+      section.card-section, .step-card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">SmartGrid Pulse · Audit complet du dépôt &amp; Feuille de route opérationnelle</div>
+    <h1>Quoi faire maintenant ?</h1>
+    <p class="lead">
+      Plan d'action concret basé sur l'inspection complète du dépôt <code>smartgrid-pulse/</code>, du schéma d'architecture Lambda &amp; Médaillon 100 % GCP (Espagne 2015–2017 Batch + Replay 2018 Streaming) et de la répartition Aya / Abarkha.
+    </p>
+    <div class="hero-links">
+      <a href="#etat">1. État des lieux réel</a>
+      <a href="#immediat">2. Actions immédiates (Étapes 0–3)</a>
+      <a href="#ml-looker">3. ML, Décision &amp; Looker (Étapes 4–6)</a>
+      <a href="#sync">4. Synchro Aya ↔ Abarkha</a>
+      <a href="flux-donnees-metier.html">↗ Ouvrir Flux des données métier</a>
+      <a href="guide-pipeline.html">↗ Ouvrir Guide de la pipeline</a>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="filters" aria-label="Filtrer par responsable">
+      <strong style="font-size:13px;margin-right:4px">Filtrer :</strong>
+      <button class="filter-btn active" data-filter="all">Tout voir</button>
+      <button class="filter-btn" data-filter="aya">Aya (Vert)</button>
+      <button class="filter-btn" data-filter="abarkha">Abarkha (Violet)</button>
+      <button class="filter-btn" data-filter="shared">Partagé (Gris)</button>
+    </div>
+    <div class="progress-box">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-text" id="progressText">0 / 0 terminées</span>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi red">
+      <div class="kpi-label">Déjà validé sur GCP</div>
+      <div class="kpi-val">Socle IoT + Gold</div>
+      <p class="kpi-sub">Cloud Run, Pub/Sub, Bronze, Archive GCS, DLQ isolée, Silver, Dataproc lecture, 3 tables Gold créées.</p>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">Prêt en local (non commité)</div>
+      <div class="kpi-val">7 / 7 tests OK</div>
+      <p class="kpi-sub"><code>replay/</code>, <code>decision/engine.py</code>, <code>business_pipeline.tf</code>, <code>merge_business_replay.sql</code>, <code>energy_cube.sql</code>.</p>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">Bloqueur n°1 détecté</div>
+      <div class="kpi-val">0 CSV en local</div>
+      <p class="kpi-sub">Les 2 CSV Kaggle Espagne (2015–2018) ne sont pas dans le workspace : indispensables pour le Batch et le Replay 2018.</p>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-label">Prochaine étape clé</div>
+      <div class="kpi-val">Commit → Replay 2018</div>
+      <p class="kpi-sub">Commiter le code local, préparer 2018 en NDJSON, puis activer <code>business_pipeline.tf</code> après revue du plan.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 1 : ETAT DES LIEUX -->
+  <section class="card-section" id="etat">
+    <h2>1. État des lieux réel du projet (Audit du dépôt)</h2>
+    <div class="status-grid">
+      <div class="status-col done">
+        <h3><span class="badge b-now">Rouge · Validé GCP</span> Déployé &amp; testé</h3>
+        <ul>
+          <li><strong>Ingestion IoT</strong> : <code>smartgrid-simulator</code> sur Cloud Run + Artifact Registry.</li>
+          <li><strong>Pub/Sub &amp; DLQ</strong> : <code>grid-telemetry-topic</code>, souscriptions BigQuery + Archive GCS (<code>iot/</code>), DLQ testée (<code>verify_dlq.py</code>).</li>
+          <li><strong>Bronze → Silver → Gold supervision</strong> : <code>streaming_raw_events</code> → <code>telemetry_clean</code> → <code>telemetry_latest</code> (rapport test Data Studio validé avec Madrid à 49,7 Hz).</li>
+          <li><strong>Dataproc Serverless</strong> : APIs activées, lecture GCS + BigQuery validée (<code>verify_dataproc_links.py</code>).</li>
+          <li><strong>Tables Gold de base créées</strong> : <code>Dim_Date</code>, <code>Dim_Time</code>, <code>Fact_Energy_Load</code> (vides pour l'instant).</li>
+        </ul>
+      </div>
+
+      <div class="status-col local">
+        <h3><span class="badge b-next">Local · Non déployé</span> Codé mais pas encore sur Git/GCP</h3>
+        <ul>
+          <li><code>replay/</code> : <code>prepare.py</code>, <code>core.py</code>, <code>app.py</code>, <code>Dockerfile</code> (Cloud Run Job replay 2018 avec checkpoint GCS).</li>
+          <li><code>schemas/energy_replay_event.schema.json</code> : contrat JSON Schema 2020-12.</li>
+          <li><code>decision/engine.py</code> : moteur de règles explicable (<code>NORMAL</code> / <code>WARNING</code> / <code>HIGH_VIGILANCE</code>).</li>
+          <li><code>terraform/business_pipeline.tf</code> : déclare le Job replay + <code>business_replay_clean</code> + 5 tables Gold ML/Décision (désactivé par <code>enable_business_pipeline = false</code>).</li>
+          <li><code>sql/merge_business_replay.sql</code> &amp; <code>sql/energy_cube.sql</code> : MERGE idempotent &amp; Cube SQL.</li>
+          <li><code>tests/</code> : 7 tests unitaires passent (<code>unittest</code>).</li>
+        </ul>
+      </div>
+
+      <div class="status-col todo">
+        <h3><span class="badge b-aya">Vert / Violet · À faire</span> Reste à construire &amp; exécuter</h3>
+        <ul>
+          <li><strong>Données</strong> : télécharger les CSV Kaggle Espagne + déposer 2015–2017 (Abarkha) et 2018 NDJSON (Aya).</li>
+          <li><strong>Calendrier &amp; Replay</strong> : exécuter <code>seed_calendar.sql</code>, déployer <code>business_pipeline.tf</code>, tester le replay 2018 + <code>merge_business_replay.sql</code>.</li>
+          <li><strong>Feature Store &amp; 4 modèles ML</strong> : <code>Fact_ML_Features</code>, Demande &amp; Prix (Aya), Solaire &amp; Éolien (Abarkha), Vertex AI Experiments &amp; Model Registry.</li>
+          <li><strong>Inférence + Decision Engine + DLQ Handler</strong> : alimenter les 5 tables Gold de sortie + logs corrélés.</li>
+          <li><strong>LookML / Looker + Orchestration</strong> : 5 pages Looker (Aya), Cloud Composer + Dataplex + Monitoring (Abarkha), CI/CD WIF (Partagé).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout red">
+      <strong>Règle d'or de gouvernance &amp; FinOps :</strong> Ne jamais lancer <code>terraform apply</code> ni un service payant (Cloud Composer, batch Dataproc massif, Cloud Run Job complet) sans avoir relu le <code>terraform plan</code>, vérifié l'état Terraform dans Cloud Shell et estimé le coût. Pour tous les tests de replay, commencer avec <code>--limit 24</code> (24 heures) avant de rejouer toute l'année 2018.
+    </div>
+  </section>
+
+  <!-- SECTION 2 : ACTIONS IMMEDIATES -->
+  <section class="card-section" id="immediat">
+    <h2>2. Ce qu'il faut faire MAINTENANT (Étapes 0 à 3)</h2>
+
+    <!-- ETAPE 0 -->
+    <article class="step-card" data-owner="aya">
+      <div class="step-head">
+        <div class="step-title"><span class="step-num">0</span> Sécuriser et commiter le code déjà écrit sur Git</div>
+        <div class="step-badges">
+          <span class="badge b-now">Priorité Immédiate · 5 min</span>
+          <span class="badge b-aya">Aya</span>
+        </div>
+      </div>
+      <p class="step-why">
+        Actuellement, <code>replay/</code>, <code>decision/</code>, <code>schemas/</code>, <code>terraform/business_pipeline.tf</code>, <code>sql/</code> et <code>tests/</code> sont non suivis (untracked) dans <code>smartgrid-pulse/</code>. Il faut les versionner sur une branche propre avant de toucher à GCP.
+      </p>
+      <ul class="task-list">
+        <li><label class="task-item"><input type="checkbox" data-id="t0-1"><span class="task-text">Vérifier les 7 tests unitaires Python en local et la syntaxe Terraform (<code>fmt</code> + <code>validate</code>).</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t0-2"><span class="task-text">Créer une branche dédiée (ex. <code>feat/business-replay-decision</code>) et commiter tous les nouveaux fichiers (sans jamais commiter de CSV, <code>.tfstate</code> ou clés JSON).</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t0-3"><span class="task-text">Pousser la branche et partager l'état d'avancement avec Abarkha.</span></label></li>
+      </ul>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        <pre><code>cd C:\Users\aya\Desktop\gcp\smartgrid-pulse
+python -m unittest discover -s tests -v
+cd terraform &amp;&amp; terraform fmt -check &amp;&amp; terraform validate &amp;&amp; cd ..
+git checkout -b feat/business-replay-decision
+git status
+git add .gitignore replay/ decision/ schemas/ sql/ terraform/business_pipeline.tf tests/ flux-donnees-metier.html plan-action-maintenant.html
+git commit -m "feat: add 2018 business replay job, decision engine, SQL merge/cube and Terraform tables"</code></pre>
+      </div>
+    </article>
+
+    <!-- ETAPE 1 -->
+    <article class="step-card" data-owner="shared">
+      <div class="step-head">
+        <div class="step-title"><span class="step-num">1</span> Récupérer les données Kaggle Espagne &amp; appliquer la séparation 2015–2017 / 2018</div>
+        <div class="step-badges">
+          <span class="badge b-now">Débloquant · Aujourd'hui</span>
+          <span class="badge b-shared">Aya + Abarkha</span>
+        </div>
+      </div>
+      <p class="step-why">
+        Aucun CSV n'est présent en local. Les données <strong>2015–2017</strong> servent uniquement à l'entraînement Batch (Abarkha) ; l'année <strong>2018</strong> est isolée en NDJSON pour le Streaming Replay (Aya) afin de garantir zéro fuite de données (<em>no data leakage</em>).
+      </p>
+      <ul class="task-list">
+        <li><label class="task-item"><input type="checkbox" data-id="t1-1"><span class="task-text">Télécharger depuis Kaggle (<em>Hourly Energy Demand, Generation and Weather</em>) les fichiers <code>energy_dataset.csv</code> et <code>weather_features.csv</code> dans un dossier ignoré par Git (ex. <code>data/raw/</code>).</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t1-2"><span class="task-text"><strong>[Aya]</strong> Générer le fichier 2018 synchronisé énergie + météo avec <code>replay.prepare</code> et tester le producteur en mode <code>--dry-run --limit 5</code>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t1-3"><span class="task-text"><strong>[Aya]</strong> Déposer <code>events_2018.ndjson</code> dans le bucket Bronze sous <code>gs://smartgrid-pulse-raw-bronze/replay-input/2018/events.ndjson</code>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t1-4"><span class="task-text"><strong>[Abarkha]</strong> Déposer les CSV historiques sous <code>gs://smartgrid-pulse-raw-bronze/historical/energy/</code> et <code>historical/weather/</code> puis exécuter l'ETL PySpark Dataproc 2015–2017 → Silver → Gold.</span></label></li>
+      </ul>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        <pre><code># 1. Préparer le fichier NDJSON 2018 en local (Aya)
+python -m replay.prepare --energy data/raw/energy_dataset.csv --weather data/raw/weather_features.csv --output data/events_2018.ndjson
+
+# 2. Valider le schéma JSON et le format sans rien envoyer sur GCP
+python replay/app.py --input-uri data/events_2018.ndjson --dry-run --limit 5
+
+# 3. Déposer dans le préfixe privé 2018 sur GCS
+gcloud storage cp data/events_2018.ndjson gs://smartgrid-pulse-raw-bronze/replay-input/2018/events.ndjson</code></pre>
+      </div>
+    </article>
+
+    <!-- ETAPE 2 -->
+    <article class="step-card" data-owner="aya">
+      <div class="step-head">
+        <div class="step-title"><span class="step-num">2</span> Peupler le calendrier Gold &amp; activer <code>business_pipeline.tf</code> sur GCP</div>
+        <div class="step-badges">
+          <span class="badge b-now">Prochain déploiement GCP</span>
+          <span class="badge b-aya">Aya · Cloud Shell</span>
+        </div>
+      </div>
+      <p class="step-why">
+        <code>Dim_Date</code> et <code>Dim_Time</code> existent déjà en Gold mais sont vides, et les 5 tables décisionnelles + le Cloud Run Job 2018 sont prêts dans <code>terraform/business_pipeline.tf</code> (protégés par un flag <code>false</code>).
+      </p>
+      <ul class="task-list">
+        <li><label class="task-item"><input type="checkbox" data-id="t2-1"><span class="task-text">Exécuter <code>sql/seed_calendar.sql</code> dans BigQuery pour charger 2015–2018 (attendu : 1 461 lignes dans <code>Dim_Date</code>, 1 440 dans <code>Dim_Time</code>).</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t2-2"><span class="task-text">Construire et pousser l'image Docker du Cloud Run Job de replay (<code>replay/Dockerfile</code>) dans Artifact Registry et récupérer son digest.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t2-3"><span class="task-text">Copier <code>terraform/business_pipeline.tf</code> dans le dossier Terraform de Cloud Shell (qui contient le <code>terraform.tfstate</code>), renseigner les 3 variables (<code>enable_business_pipeline = true</code>, image, URI GCS) et lancer <code>terraform plan</code>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t2-4"><span class="task-text">Relire le plan (zéro destruction, création de <code>business_replay_clean</code>, des 5 tables Gold et du Cloud Run Job), puis lancer <code>terraform apply</code>.</span></label></li>
+      </ul>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        <pre><code># 1. Initialiser Dim_Date et Dim_Time (2015-2018)
+bq --project_id=smartgrid-pulse --location=europe-west1 query \
+  --use_legacy_sql=false --maximum_bytes_billed=104857600 \
+  --parameter='start_date:DATE:2015-01-01' \
+  --parameter='end_date:DATE:2018-12-31' &lt; sql/seed_calendar.sql
+
+# 2. Construire et pousser l'image Docker du replay 2018 (Cloud Shell)
+repo_uri=$("$HOME/.local/bin/terraform" output -raw simulator_repository)
+replay_image="$repo_uri/business-replay:v0.1.0"
+docker build --platform linux/amd64 -t "$replay_image" -f replay/Dockerfile .
+docker push "$replay_image"
+replay_digest=$(docker image inspect --format '{{index .RepoDigests 0}}' "$replay_image")
+
+# 3. Activer business_pipeline.tf (plan obligatoire avant apply !)
+cat &lt;&lt;EOF &gt; business-pipeline.auto.tfvars
+enable_business_pipeline  = true
+business_replay_image     = "$replay_digest"
+business_replay_input_uri = "gs://smartgrid-pulse-raw-bronze/replay-input/2018/events.ndjson"
+EOF
+"$HOME/.local/bin/terraform" validate &amp;&amp; "$HOME/.local/bin/terraform" plan -out=smartgrid-business.tfplan</code></pre>
+      </div>
+    </article>
+
+    <!-- ETAPE 3 -->
+    <article class="step-card" data-owner="aya">
+      <div class="step-head">
+        <div class="step-title"><span class="step-num">3</span> Valider le flux Streaming 2018 &amp; le MERGE idempotent Bronze → Silver → Gold</div>
+        <div class="step-badges">
+          <span class="badge b-next">Test End-to-End</span>
+          <span class="badge b-aya">Aya</span>
+        </div>
+      </div>
+      <p class="step-why">
+        Avant d'entraîner les modèles, prouver que le streaming métier 2018 traverse toute la chaîne sans doublon : Cloud Run Job → Pub/Sub → BigQuery Bronze → <code>merge_business_replay.sql</code> → Silver <code>business_replay_clean</code> → Gold <code>Fact_Energy_Load</code>.
+      </p>
+      <ul class="task-list">
+        <li><label class="task-item"><input type="checkbox" data-id="t3-1"><span class="task-text">Exécuter un premier run court du Cloud Run Job (ex. 24 événements = 1 journée de 2018) et vérifier l'arrivée dans <code>bronze_smartgrid.streaming_raw_events</code> et <code>gs://.../iot/</code>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t3-2"><span class="task-text">Lancer <code>sql/merge_business_replay.sql</code> sur la fenêtre de publication et vérifier les lignes insérées dans <code>silver_smartgrid.business_replay_clean</code> et <code>gold_smartgrid.Fact_Energy_Load</code>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t3-3"><span class="task-text"><strong>Test d'idempotence</strong> : relancer exactement le même <code>MERGE</code> et vérifier qu'il insère <code>0</code> ligne supplémentaire.</span></label></li>
+      </ul>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+        <pre><code># Lancer le Cloud Run Job (avec surcharge --limit=24 pour le 1er test)
+gcloud run jobs execute smartgrid-business-replay-2018 \
+  --region=europe-west1 --project=smartgrid-pulse \
+  --args="--limit=24,--interval-seconds=0.2" --wait
+
+# Exécuter le MERGE transactionnel Bronze -&gt; Silver -&gt; Gold
+bq --project_id=smartgrid-pulse --location=europe-west1 query \
+  --use_legacy_sql=false --maximum_bytes_billed=104857600 \
+  --parameter='publish_start:TIMESTAMP:2026-11-26 00:00:00+00' \
+  --parameter='publish_end:TIMESTAMP:2026-11-27 00:00:00+00' &lt; sql/merge_business_replay.sql</code></pre>
+      </div>
+    </article>
+  </section>
+
+  <!-- SECTION 3 : ML, DECISION ENGINE & LOOKER -->
+  <section class="card-section" id="ml-looker">
+    <h2>3. Suite du chantier : Machine Learning, Decision Engine &amp; Looker (Étapes 4 à 6)</h2>
+
+    <!-- ETAPE 4 -->
+    <article class="step-card" data-owner="shared">
+      <div class="step-head">
+        <div class="step-title"><span class="step-num">4</span> Feature Store Gold &amp; Entraînement des 4 modèles ML (2015–2017 uniquement)</div>
+        <div class="step-badges">
+          <span class="badge b-next">Cœur Data Science</span>
+          <span class="badge b-aya">Aya : Demande &amp; Prix</span>
+          <span class="badge b-abarkha">Abarkha : Solaire &amp; Éolien</span>
+        </div>
+      </div>
+      <p class="step-why">
+        Le modèle Prix (Modèle 4) dépend explicitement des sorties des 3 modèles amont (Demande + Solaire + Éolien). Tous doivent respecter le même contrat de sortie et n'accéder qu'à 2015–2017.
+      </p>
+      <ul class="task-list">
+        <li><label class="task-item"><input type="checkbox" data-id="t4-1"><span class="task-text"><strong>[Partagé]</strong> Créer <code>gold_smartgrid.Fact_ML_Features</code> (Lags T-1h, T-2h, T-24h, T-168h, rolling means/std 3h et 24h, calendrier, météo disponible au temps <em>t</em>).</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t4-2"><span class="task-text"><strong>[Aya]</strong> Écrire le job PySpark Dataproc Serverless pour le <strong>Modèle 1 (Demande / STLF)</strong> : <code>GBTRegressor</code>, validation walk-forward, comparaison baseline, objectif MAPE &lt; 3 %.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t4-3"><span class="task-text"><strong>[Abarkha]</strong> Entraîner le <strong>Modèle 2 (Solaire)</strong> et le <strong>Modèle 3 (Éolien)</strong> avec Spark MLlib et publier dans <code>Fact_Renewable_Predictions</code>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t4-4"><span class="task-text"><strong>[Partagé]</strong> Tracer tous les runs dans <strong>Vertex AI Experiments</strong> et enregistrer les versions approuvées dans <strong>Vertex AI Model Registry</strong>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t4-5"><span class="task-text"><strong>[Aya]</strong> Entraîner le <strong>Modèle 4 (Prix Spot)</strong> en consommant les prévisions Demande + Solaire + Éolien et publier dans <code>Fact_Price_Predictions</code>.</span></label></li>
+      </ul>
+    </article>
+
+    <!-- ETAPE 5 -->
+    <article class="step-card" data-owner="aya">
+      <div class="step-head">
+        <div class="step-title"><span class="step-num">5</span> Inférence Streaming 2018, Anomalies, Decision Engine &amp; DLQ Handler</div>
+        <div class="step-badges">
+          <span class="badge b-later">Intégration Métier</span>
+          <span class="badge b-aya">Aya</span>
+        </div>
+      </div>
+      <p class="step-why">
+        Le moteur <code>decision/engine.py</code> est déjà codé et testé en unitaire. Il reste à le connecter au flux d'inférence sur 2018 pour remplir <code>Fact_Anomalies</code> et <code>Fact_Recommendations</code>, et à séparer proprement la gestion des erreurs techniques (DLQ Handler).
+      </p>
+      <ul class="task-list">
+        <li><label class="task-item"><input type="checkbox" data-id="t5-1"><span class="task-text">Créer le job d'inférence Streaming (à la demande pour le MVP) : charge les modèles approuvés depuis Vertex AI Model Registry, calcule les prédictions sur la fenêtre 2018 et écrit dans les tables Gold.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t5-2"><span class="task-text">Brancher <code>decision/engine.py</code> sur les 4 prédictions + réel observé pour calculer demande résiduelle, couverture renouvelable, anomalies prédictives (<code>Fact_Anomalies</code>) et recommandations (<code>Fact_Recommendations</code>).</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t5-3"><span class="task-text">Implémenter le <strong>DLQ Handler</strong> (relecture, journalisation et replay contrôlé des échecs techniques Pub/Sub, strictement séparé du Decision Engine).</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t5-4"><span class="task-text">Ajouter des logs structurés <strong>Cloud Logging</strong> corrélés par <code>event_id</code>, <code>run_id</code>, <code>model_version</code> et <code>rule_version</code>.</span></label></li>
+      </ul>
+    </article>
+
+    <!-- ETAPE 6 -->
+    <article class="step-card" data-owner="shared">
+      <div class="step-head">
+        <div class="step-title"><span class="step-num">6</span> Cube SQL, LookML / 5 Pages Looker, Orchestration &amp; Finalisation</div>
+        <div class="step-badges">
+          <span class="badge b-later">Restitution &amp; Soutenance</span>
+          <span class="badge b-aya">Aya : Looker &amp; Cube</span>
+          <span class="badge b-abarkha">Abarkha : Composer &amp; Dataplex</span>
+        </div>
+      </div>
+      <p class="step-why">
+        Exposer les résultats décisionnels dans Looker (avec contrôle du cache) et verrouiller l'orchestration, la gouvernance et la démonstration finale.
+      </p>
+      <ul class="task-list">
+        <li><label class="task-item"><input type="checkbox" data-id="t6-1"><span class="task-text"><strong>[Aya]</strong> Exécuter et valider <code>sql/energy_cube.sql</code> (<code>GROUPING SETS</code> / <code>ROLLUP</code> / <code>CUBE</code>) sur <code>Fact_Energy_Load</code> une fois les données chargées.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t6-2"><span class="task-text"><strong>[Aya]</strong> Créer la couche sémantique <strong>LookML</strong> (vues, dimensions, mesures, joins, Explores, datagroups invalidés après MERGE/replay) et construire les <strong>5 pages métier</strong> : <em>Executive Overview, Demand, Generation, Market, Intelligent Decision Center</em>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t6-3"><span class="task-text"><strong>[Abarkha]</strong> Déployer les DAGs <strong>Cloud Composer</strong> (batch, entraînement, replay, réconciliation), configurer <strong>Dataplex</strong> (catalogue, DQ, lineage) et les alertes <strong>Cloud Monitoring</strong>.</span></label></li>
+        <li><label class="task-item"><input type="checkbox" data-id="t6-4"><span class="task-text"><strong>[Partagé]</strong> Mettre en place <strong>IAM + WIF</strong> (GitHub Actions CI/CD pour <code>terraform validate/plan</code> et tests unitaires), valider la réconciliation Batch/Streaming et répéter la démo live.</span></label></li>
+      </ul>
+    </article>
+  </section>
+
+  <!-- SECTION 4 : SYNCHRONISATION BINOME -->
+  <section class="card-section" id="sync">
+    <h2>4. Points de synchronisation immédiats Aya ↔ Abarkha</h2>
+    <p>Pour éviter tout blocage entre vos deux périmètres, validez ces 4 interfaces dès cette semaine :</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Point de jonction</th>
+            <th>Qui fournit ?</th>
+            <th>Qui consomme ?</th>
+            <th>Contrat attendu</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Historique 2015–2017 nettoyé</strong></td>
+            <td><span class="badge b-abarkha">Abarkha</span></td>
+            <td><span class="badge b-aya">Aya</span></td>
+            <td>Chargé dans <code>gold_smartgrid.Fact_Energy_Load</code> (1 ligne nationale / heure UTC, unités MW et €/MWh) + <code>Fact_Weather_Obs</code> + <code>Dim_City</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Préfixe GCS 2018 isolé</strong></td>
+            <td><span class="badge b-aya">Aya</span></td>
+            <td><span class="badge b-shared">Partagé</span></td>
+            <td><code>gs://smartgrid-pulse-raw-bronze/replay-input/2018/events.ndjson</code> interdit en lecture au compte de service d'entraînement ML.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Sorties des modèles Solaire &amp; Éolien</strong></td>
+            <td><span class="badge b-abarkha">Abarkha</span></td>
+            <td><span class="badge b-aya">Aya</span></td>
+            <td>Écrites dans <code>gold_smartgrid.Fact_Renewable_Predictions</code> avec <code>prediction_time_utc</code>, <code>target_time_utc</code>, <code>horizon_hours</code>, <code>model_version</code> (indispensable pour le Modèle 4 Prix et le Decision Engine).</td>
+          </tr>
+          <tr>
+            <td><strong>4. État Terraform &amp; Branche Git</strong></td>
+            <td><span class="badge b-shared">Partagé</span></td>
+            <td><span class="badge b-shared">Partagé</span></td>
+            <td>Ne jamais modifier l'état Terraform en parallèle : chaque évolution passe par une branche Git + revue du <code>terraform plan</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout green">
+      <strong>Astuce :</strong> Vos coches sont sauvegardées automatiquement dans ce navigateur (<code>localStorage</code>). Vous pouvez fermer et rouvrir ce fichier pour suivre votre progression étape par étape.
+    </div>
+  </section>
+
+  <footer>
+    SmartGrid Pulse · Plan d'action généré le 26 novembre 2026 à partir de l'audit complet du projet · Fichier autonome sans dépendance externe.
+  </footer>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'smartgrid_pulse_action_plan_v1';
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch { return {}; }
+  }
+
+  function saveState(state) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+  }
+
+  function updateProgress() {
+    const boxes = Array.from(document.querySelectorAll('.task-item input[type="checkbox"]'));
+    const done = boxes.filter(b => b.checked).length;
+    const total = boxes.length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = `${done} / ${total} terminées (${pct}%)`;
+  }
+
+  // Init checkboxes
+  const state = loadState();
+  document.querySelectorAll('.task-item input[type="checkbox"]').forEach(box => {
+    const id = box.dataset.id;
+    if (state[id]) {
+      box.checked = true;
+      box.closest('.task-item').classList.add('checked');
+    }
+    box.addEventListener('change', () => {
+      state[id] = box.checked;
+      box.closest('.task-item').classList.toggle('checked', box.checked);
+      saveState(state);
+      updateProgress();
+    });
+  });
+  updateProgress();
+
+  // Filters
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.step-card').forEach(card => {
+        const owner = card.dataset.owner;
+        const show = filter === 'all' || owner === filter || (filter !== 'shared' && owner === 'shared');
+        card.classList.toggle('hidden-by-filter', !show);
+      });
+    });
+  });
+
+  // Copy buttons
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'Copié ✓';
+      setTimeout(() => btn.textContent = old, 1500);
+    });
+  }
+</script>
+</body>
+</html>

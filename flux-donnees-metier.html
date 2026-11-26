@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartGrid Pulse — Flux des données métier</title>
+  <style>
+    :root {
+      --ink:#15343a; --muted:#587076; --line:#c9dcd7; --paper:#f7fbfa;
+      --source:#edf7f3; --bronze:#fff1e7; --silver:#eaf3ff; --gold:#fff7d9; --serve:#edf7f0;
+      --green:#19844f; --green2:#dff3e3; --purple:#8038d1; --red:#ef3e3e; --gray:#6d7e7b;
+      --blue:#4285f4; --shadow:0 8px 24px rgba(21,52,58,.08);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "Segoe UI",Arial,sans-serif}
+    body::before{content:"";position:fixed;inset:0;z-index:-1;opacity:.5;background-image:linear-gradient(#e6efed 1px,transparent 1px),linear-gradient(90deg,#e6efed 1px,transparent 1px);background-size:28px 28px}
+    .wrap{max-width:1500px;margin:auto;padding:28px}
+    header{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start;margin-bottom:24px}
+    .eyebrow{color:var(--green);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    h1{font-size:clamp(38px,5vw,72px);line-height:1.03;margin:8px 0 10px;letter-spacing:-.04em}
+    h2{font-size:28px;margin:0 0 16px} h3{font-size:20px;margin:0 0 8px}
+    p{margin:5px 0}.lead{font-size:19px;color:var(--muted);max-width:950px}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:white;font-weight:700;white-space:nowrap}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--green)}
+    nav{position:sticky;top:10px;z-index:5;display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:24px}
+    nav a{color:var(--ink);text-decoration:none;padding:6px 10px;border-radius:9px;font-weight:650} nav a:hover{background:var(--green2);color:var(--green)}
+    section{margin:24px 0;padding:24px;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+    .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .principle{padding:16px;border-radius:14px;background:#f7faf9;border:1px solid var(--line)}
+    .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--green);color:white;font-weight:800;margin-bottom:8px}
+    .legend{display:flex;gap:14px;flex-wrap:wrap}.legend span{display:flex;align-items:center;gap:7px}.legend i{width:30px;height:4px;border-radius:3px}
+    .pipeline{overflow-x:auto;padding-bottom:10px}
+    .grid{min-width:1260px;display:grid;grid-template-columns:1.05fr 1.25fr 1.35fr 1.55fr 1.2fr;gap:12px}
+    .colhead{padding:15px 16px;border-radius:14px 14px 6px 6px;border:1px solid var(--line);min-width:0}
+    .colhead b{display:block;font-size:20px}.colhead small{color:var(--muted)}
+    .source-bg{background:var(--source)}.bronze-bg{background:var(--bronze)}.silver-bg{background:var(--silver)}.gold-bg{background:var(--gold)}.serve-bg{background:var(--serve)}
+    .lane-title{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;font-weight:800;font-size:18px;margin-top:8px;min-width:0}
+    .lane-title small{font-weight:650;color:var(--muted);max-width:55%;text-align:right;white-space:normal}
+    .cell{min-height:250px;min-width:0;padding:12px;border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;gap:12px}
+    .card{position:relative;min-width:0;overflow-wrap:break-word;background:white;border:2px solid var(--gray);border-radius:14px;padding:14px 14px 13px;min-height:92px}
+    .card::after{content:"→";position:absolute;right:-23px;top:50%;transform:translateY(-50%);font-size:24px;color:#315f58;font-weight:900;z-index:2}
+    .cell:last-child .card::after,.card.no-arrow::after{display:none}
+    .card h3{display:flex;align-items:center;gap:9px}.ico{display:inline-grid;place-items:center;min-width:37px;height:37px;border-radius:10px;background:#edf4ff;color:var(--blue);font-size:12px;font-weight:900;border:1px solid #d7e4f8}
+    .card p{color:var(--muted)}.card .owner{margin-top:8px;font-size:13px;font-weight:750}
+    .aya{border-color:var(--green)}.aya .owner{color:var(--green)}
+    .abarkha{border-color:var(--purple)}.abarkha .owner{color:var(--purple)}
+    .shared{border-color:var(--gray)}.shared .owner{color:var(--gray)}
+    .branch{display:grid;grid-template-columns:1fr;gap:10px}.branch .card::after{display:none}
+    .down{display:grid;place-items:center;color:#315f58;font-weight:900;font-size:25px;height:24px}
+    .flowline{display:flex;align-items:stretch;gap:11px;overflow-x:auto;padding:8px 3px 16px}
+    .step{min-width:200px;flex:1;padding:15px;border:2px solid var(--green);border-radius:14px;background:white;position:relative}
+    .step:not(:last-child)::after{content:"→";position:absolute;right:-20px;top:42%;font-size:24px;color:#315f58;font-weight:900;z-index:3}
+    .step strong{display:block;font-size:17px;margin-bottom:5px}.step small{color:var(--muted)}
+    .model-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-top:15px}
+    .model{border:2px solid var(--gray);border-radius:14px;background:white;padding:15px}.model h3{display:flex;justify-content:space-between}.model .tag{font-size:12px;border-radius:999px;padding:3px 8px;background:#eef3f2;color:var(--muted)}
+    .model.price{border-color:var(--green);grid-column:2/4}.dependency{text-align:center;font-weight:800;color:var(--green);padding:10px}
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--line);border-radius:12px}
+    th,td{padding:10px 12px;border-bottom:1px solid #dfe9e6;text-align:left;vertical-align:top}th{background:#146b54;color:white}tr:last-child td{border-bottom:0}tbody tr:nth-child(even){background:#f5f8f7}
+    code,pre{font-family:Consolas,"Courier New",monospace}code{background:#eef3f2;padding:2px 5px;border-radius:5px}
+    pre{margin:10px 0 0;padding:14px;border-radius:12px;background:#102c31;color:#dff5ed;overflow:auto;font-size:13px;line-height:1.55}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.callout{padding:15px;border-left:5px solid var(--green);background:#eff8f2;border-radius:8px}.warning{border-color:#d89516;background:#fff7e5}
+    .roles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.role{padding:17px;border-radius:14px;background:white;border:2px solid var(--gray)}.role.aya{border-color:var(--green)}.role.abarkha{border-color:var(--purple)}
+    .checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 22px}.check{padding:9px 11px;border-radius:9px;background:#f3f7f6}.check::before{content:"□";color:var(--green);font-weight:900;margin-right:8px}
+    footer{padding:16px 4px 28px;color:var(--muted);font-size:13px}
+    @media(max-width:900px){.principles,.two,.roles,.model-grid{grid-template-columns:1fr}.model.price{grid-column:auto}header{grid-template-columns:1fr}.checklist{grid-template-columns:1fr}}
+    @media print{nav{display:none}body{background:white}.wrap{max-width:none;padding:10px}section{box-shadow:none;break-inside:avoid}.pipeline{overflow:visible}.grid{min-width:0}h1{font-size:42px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">SmartGrid Pulse · Espagne 2015–2018</div>
+      <h1>Flux des données métier</h1>
+      <p class="lead">Architecture Lambda et Médaillon 100 % GCP : historique 2015–2017 pour l'entraînement, observations 2018 rejouées en Streaming, fusion idempotente dans Gold, prédictions, anomalies, décisions et restitution Looker.</p>
+    </div>
+    <div class="pill"><span class="dot"></span> Flux métier uniquement</div>
+  </header>
+
+  <nav>
+    <a href="#principes">Principes</a><a href="#pipeline">Pipeline</a><a href="#fusion">Fusion Gold</a>
+    <a href="#ml">Machine Learning</a><a href="#decision">Décision</a><a href="#qualite">Qualité</a>
+    <a href="#looker">Looker</a><a href="#roles">Rôles</a><a href="#ordre">Ordre d'implémentation</a>
+  </nav>
+
+  <section id="principes">
+    <h2>Principes structurants</h2>
+    <div class="principles">
+      <div class="principle"><span class="num">1</span><h3>Séparation temporelle</h3><p>2015–2017 sert au profilage, aux seuils et à l'entraînement. L'année 2018 reste inaccessible au compte d'entraînement.</p></div>
+      <div class="principle"><span class="num">2</span><h3>Médaillon</h3><p>Bronze conserve le brut, Silver valide et normalise, Gold porte les grains métiers, les prédictions et les décisions.</p></div>
+      <div class="principle"><span class="num">3</span><h3>Lambda</h3><p>Le Batch construit le référentiel historique. Le Streaming rejoue 2018 et converge vers les mêmes faits Gold.</p></div>
+      <div class="principle"><span class="num">4</span><h3>Idempotence</h3><p>Clés déterministes, déduplication et <code>MERGE</code> garantissent qu'un événement rejoué deux fois ne crée qu'une ligne métier.</p></div>
+    </div>
+    <div class="legend" style="margin-top:15px">
+      <span><i style="background:var(--green)"></i> Aya</span><span><i style="background:var(--purple)"></i> Abarkha</span><span><i style="background:var(--gray)"></i> Partagé</span>
+    </div>
+  </section>
+
+  <section id="pipeline">
+    <h2>Pipeline de données détaillé</h2>
+    <div class="pipeline">
+      <div class="grid">
+        <div class="colhead source-bg"><b>Sources</b><small>Données réelles espagnoles</small></div>
+        <div class="colhead bronze-bg"><b>Bronze</b><small>Brut immuable et archives</small></div>
+        <div class="colhead silver-bg"><b>Silver</b><small>Qualité, nettoyage, conformité</small></div>
+        <div class="colhead gold-bg"><b>Gold</b><small>Faits, ML et décisions</small></div>
+        <div class="colhead serve-bg"><b>Restitution</b><small>Looker et supervision</small></div>
+
+        <div class="lane-title"><span>Pipeline Batch · historique 2015–2017</span><small>Cloud Composer orchestre les lots</small></div>
+        <div class="cell source-bg"><div class="card abarkha"><h3><span class="ico">CSV</span>Kaggle Espagne</h3><p><code>energy_dataset.csv</code> : une heure nationale. <code>weather_features.csv</code> : une ville et une heure.</p><div class="owner">Abarkha · audit et profilage</div></div></div>
+        <div class="cell bronze-bg"><div class="card abarkha"><h3><span class="ico">GCS</span>Cloud Storage Bronze</h3><p><code>historical/energy/</code> et <code>historical/weather/</code>. Objets immuables, versionnés et partitionnés.</p><div class="owner">Abarkha · dépôt Bronze</div></div></div>
+        <div class="cell silver-bg">
+          <div class="card abarkha no-arrow"><h3><span class="ico">DP</span>Dataproc Serverless</h3><p>PySpark : types, UTC, unités, doublons, continuité horaire et normalisation météo.</p><div class="owner">Abarkha · ETL batch</div></div>
+          <div class="down">↓</div>
+          <div class="branch">
+            <div class="card abarkha"><h3><span class="ico">DQ</span>Dataplex DQ</h3><p>Schémas, nulls, clés, bornes, fraîcheur.</p></div>
+            <div class="card abarkha"><h3><span class="ico">BQ</span>BigQuery Silver</h3><p><code>energy_hourly_clean</code>, <code>weather_hourly_clean</code>, quarantaine.</p></div>
+          </div>
+        </div>
+        <div class="cell gold-bg"><div class="card shared"><h3><span class="ico">BQ</span>MERGE Gold Batch</h3><p>Clés déterministes, <code>source=BATCH</code>, dimensions conformes et faits au grain documenté.</p><div class="owner">Partagé · contrats et réconciliation</div></div></div>
+        <div class="cell serve-bg"><div class="card shared no-arrow"><h3><span class="ico">REF</span>Référentiel historique</h3><p>Features, entraînement, seuils, cube SQL et analyses historiques.</p><div class="owner">Lecture gouvernée</div></div></div>
+
+        <div class="lane-title"><span>Pipeline Streaming métier · replay énergie + météo 2018</span><small>Cloud Scheduler/Composer → Cloud Run Job → Pub/Sub push</small></div>
+        <div class="cell source-bg">
+          <div class="card aya no-arrow"><h3><span class="ico">GCS</span>Cloud Storage Replay</h3><p>Préfixe 2018 privé. Énergie et météo synchronisées. Accès refusé au service d'entraînement.</p><div class="owner">Aya · séparation temporelle</div></div>
+          <div class="down">↓</div>
+          <div class="card aya"><h3><span class="ico">RUN</span>Cloud Run Job</h3><p>Lecture chronologique, vitesse configurable, checkpoint, reprise et <code>event_id</code>.</p><div class="owner">Aya · producteur Streaming</div></div>
+        </div>
+        <div class="cell bronze-bg">
+          <div class="card aya no-arrow"><h3><span class="ico">PS</span>Pub/Sub existant</h3><p>Le replay publie sur <code>grid-telemetry-topic</code> avec <code>source=STREAM_REPLAY</code> pour identifier ses événements.</p></div>
+          <div class="down">↓</div>
+          <div class="branch">
+            <div class="card aya"><h3><span class="ico">BQ</span>BigQuery Bronze existant</h3><p><code>streaming_raw_events</code> conserve les messages bruts et leurs métadonnées Pub/Sub.</p></div>
+            <div class="card aya"><h3><span class="ico">GCS</span>Archive NDJSON existante</h3><p>L’abonnement GCS archive les messages bruts sous le préfixe existant <code>iot/</code>. La DLQ existante recueille les échecs de livraison.</p></div>
+          </div>
+        </div>
+        <div class="cell silver-bg"><div class="card aya"><h3><span class="ico">DQ</span>Silver incrémental</h3><p>Contrat, types, watermark, événements tardifs, déduplication par <code>event_id</code>, quarantaine et rapport qualité.</p><div class="owner">Aya · règles DQ partagées</div></div></div>
+        <div class="cell gold-bg">
+          <div class="card shared no-arrow"><h3><span class="ico">BQ</span>MERGE Gold Streaming</h3><p>Mêmes clés et grains que le Batch. <code>source=STREAM_REPLAY</code>. Aucun doublon métier.</p></div>
+          <div class="down">↓</div>
+          <div class="branch">
+            <div class="card aya"><h3><span class="ico">ML</span>Inférence</h3><p>Features au temps t et modèle approuvé.</p></div>
+            <div class="card aya"><h3><span class="ico">GOLD</span>Résultats</h3><p>Prédictions, erreurs, anomalies, recommandations.</p></div>
+          </div>
+        </div>
+        <div class="cell serve-bg"><div class="card aya no-arrow"><h3><span class="ico">LKR</span>Looker</h3><p>Lecture BigQuery directe. Le datagroup est invalidé après le <code>MERGE</code>, la fin du replay ou l'approbation d'un modèle.</p><div class="owner">Aya · fraîcheur contrôlée</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="fusion">
+    <h2>Fusion Batch–Streaming dans Gold</h2>
+    <div class="two">
+      <div>
+        <h3>Clés communes</h3>
+        <table>
+          <thead><tr><th>Objet</th><th>Grain et clé</th></tr></thead>
+          <tbody>
+            <tr><td>Charge</td><td>Une heure nationale · <code>ENERGY|timestamp_utc</code></td></tr>
+            <tr><td>Prix</td><td>Une heure nationale · même clé temporelle</td></tr>
+            <tr><td>Génération</td><td>Une heure + source d'énergie</td></tr>
+            <tr><td>Météo</td><td>Une heure + ville</td></tr>
+            <tr><td>Prédiction</td><td>origine + cible + horizon + modèle + version</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>MERGE idempotent</h3>
+        <pre>MERGE gold.Fact_Energy_Load AS target
+USING silver.energy_events AS source
+ON target.load_key = source.load_key
+WHEN MATCHED AND source.ingestion_time &gt; target.ingestion_time
+  THEN UPDATE SET ...
+WHEN NOT MATCHED
+  THEN INSERT (...);
+
+-- Un même event_id rejoué deux fois = une seule ligne Gold.</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:15px"><strong>Réconciliation :</strong> comparer les comptes, sommes et clés du Batch et du Streaming pour une même fenêtre. Les écarts sont journalisés avant toute publication Looker.</div>
+  </section>
+
+  <section id="ml">
+    <h2>Chaîne Machine Learning</h2>
+    <div class="flowline">
+      <div class="step"><strong>Gold historique</strong><small>Observations validées 2015–2017.</small></div>
+      <div class="step"><strong>Fact_ML_Features</strong><small>Lags, rolling windows, calendrier et météo disponible.</small></div>
+      <div class="step"><strong>Spark MLlib</strong><small>Walk-forward et comparaison aux baselines.</small></div>
+      <div class="step"><strong>Vertex AI Experiments</strong><small>Paramètres, dataset, métriques et artefacts.</small></div>
+      <div class="step"><strong>Model Registry</strong><small>Version approuvée et compatible pour l'inférence.</small></div>
+    </div>
+    <div class="model-grid">
+      <div class="model aya"><h3>1. Demande <span class="tag">Aya</span></h3><p>Cible : <code>actual_load_mw</code>. Historique, calendrier, météo et lags.</p></div>
+      <div class="model abarkha"><h3>2. Solaire <span class="tag">Abarkha</span></h3><p>Cible : génération solaire. Rayonnement, nuages, température et saisonnalité.</p></div>
+      <div class="model abarkha"><h3>3. Éolien <span class="tag">Abarkha</span></h3><p>Cible : génération éolienne. Vitesse/direction du vent et historique.</p></div>
+      <div class="model shared"><h3>Contrats communs <span class="tag">Partagé</span></h3><p><code>prediction_time</code>, <code>target_time</code>, horizon, modèle, version et unité.</p></div>
+      <div class="dependency" style="grid-column:1/-1">Prévisions demande + solaire + éolien ↓</div>
+      <div class="model price"><h3>4. Prix <span class="tag">Aya</span></h3><p>Le prix exploite explicitement les trois prévisions précédentes, les prix passés et les variables calendaires. Il ne démarre qu'après validation de la compatibilité des sorties amont.</p></div>
+    </div>
+    <div class="two" style="margin-top:16px">
+      <div class="callout"><strong>Entraînement :</strong> 2015–2017 uniquement, avec validation temporelle walk-forward. Les données 2018 ne sont jamais accessibles au service d'entraînement.</div>
+      <div class="callout"><strong>Inférence :</strong> chaque observation 2018 validée construit ses features au temps t, charge une version approuvée, puis écrit la prédiction dans Gold.</div>
+    </div>
+  </section>
+
+  <section id="decision">
+    <h2>Anomalies et Decision Engine</h2>
+    <div class="flowline">
+      <div class="step"><strong>Prédictions Gold</strong><small>Demande, solaire, éolien et prix.</small></div>
+      <div class="step"><strong>Arrivée du réel</strong><small>La valeur observée complète l'horizon concerné.</small></div>
+      <div class="step"><strong>Résidus</strong><small>Réel − prédiction antérieure, par modèle et horizon.</small></div>
+      <div class="step"><strong>Anomalies</strong><small>Seuils historiques versionnés et explicables.</small></div>
+      <div class="step"><strong>Decision Engine</strong><small>Règles métier, vigilance et recommandations.</small></div>
+    </div>
+    <table>
+      <thead><tr><th>Calcul</th><th>Définition</th><th>Utilisation</th></tr></thead>
+      <tbody>
+        <tr><td>Demande résiduelle</td><td>Demande prévue − solaire prévu − éolien prévu</td><td>Mesure la charge restant à couvrir.</td></tr>
+        <tr><td>Couverture solaire</td><td>Solaire prévu / demande prévue</td><td>Part prévisionnelle couverte par le solaire.</td></tr>
+        <tr><td>Couverture éolienne</td><td>Éolien prévu / demande prévue</td><td>Part prévisionnelle couverte par l'éolien.</td></tr>
+        <tr><td>Erreur prédictive</td><td>|réel − prédit| et erreur relative</td><td>Détecte une dérive ou une observation inhabituelle.</td></tr>
+        <tr><td>Niveau</td><td><code>NORMAL</code>, <code>WARNING</code>, <code>HIGH_VIGILANCE</code></td><td>Priorise les actions sans prétendre calculer une probabilité de panne.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warning" style="margin-top:15px"><strong>Séparation stricte :</strong> la DLQ traite les erreurs techniques de livraison ou de traitement. Le Decision Engine traite uniquement les prédictions, anomalies et règles métier.</div>
+  </section>
+
+  <section id="qualite">
+    <h2>Qualité, watermark et événements tardifs</h2>
+    <div class="two">
+      <div>
+        <h3>Avant Silver</h3>
+        <div class="checklist">
+          <div class="check">Schéma et version reconnus</div><div class="check">Types et unités conformes</div>
+          <div class="check">Clés obligatoires présentes</div><div class="check">Valeurs dans les bornes</div>
+          <div class="check">Unicité de l'event_id</div><div class="check">Continuité horaire</div>
+          <div class="check">Ville et source référencées</div><div class="check">Quarantaine des rejets</div>
+        </div>
+      </div>
+      <div>
+        <h3>Gestion temporelle</h3>
+        <p><strong>Event time :</strong> heure réelle de l'observation 2018.</p>
+        <p><strong>Ingestion time :</strong> heure d'arrivée dans la plateforme.</p>
+        <p><strong>Watermark :</strong> borne jusqu'à laquelle le traitement considère la fenêtre complète.</p>
+        <p><strong>Late event :</strong> événement reçu après le watermark ; il est réconcilié par un <code>MERGE</code> correctif et invalide le cache concerné.</p>
+        <p><strong>Dataplex :</strong> publie les résultats DQ, le propriétaire, la description et le lineage Bronze→Silver→Gold.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="looker">
+    <h2>BigQuery Gold → LookML → Looker</h2>
+    <div class="flowline">
+      <div class="step"><strong>Tables Gold</strong><small>Réel, prédit, anomalies, décisions, recommandations, performances.</small></div>
+      <div class="step"><strong>Cube BigQuery SQL</strong><small><code>CUBE</code>, <code>ROLLUP</code>, <code>GROUPING SETS</code>.</small></div>
+      <div class="step"><strong>LookML</strong><small>Dimensions, mesures, joins many_to_one et contrôles d'accès.</small></div>
+      <div class="step"><strong>Explores</strong><small>Période, horizon, source, modèle, version, ville et énergie.</small></div>
+      <div class="step"><strong>Dashboards</strong><small>Executive, Demand, Generation, Market et Decision Center.</small></div>
+    </div>
+    <div class="callout"><strong>Rafraîchissement :</strong> Looker interroge BigQuery. Un datagroup est invalidé après un <code>MERGE</code> Gold réussi, la fin d'un replay ou la promotion d'une version de modèle. Le cache ne doit pas être rafraîchi en boucle sans nouvelle donnée.</div>
+  </section>
+
+  <section id="roles">
+    <h2>Responsabilités</h2>
+    <div class="roles">
+      <div class="role aya"><h3>Aya</h3><p>Replay 2018, Cloud Run Job, Pub/Sub métier, Bronze Streaming, validation incrémentale, charge et prix, inférence, anomalies, Decision Engine, cube SQL, LookML et Looker.</p></div>
+      <div class="role abarkha"><h3>Abarkha</h3><p>Sources historiques, météo, ETL Batch, génération, dimensions City/Source, modèles solaire et éolien, Composer, Dataplex et Cloud Monitoring.</p></div>
+      <div class="role"><h3>Partagé</h3><p>Contrats, grains, clés, features, métriques, réconciliation Batch/Streaming, IAM, validation des modèles, tests end-to-end et soutenance.</p></div>
+    </div>
+  </section>
+
+  <section id="ordre">
+    <h2>Ordre recommandé d'implémentation</h2>
+    <div class="checklist">
+      <div class="check">Valider les contrats Silver et Gold</div><div class="check">Profiler les deux CSV</div>
+      <div class="check">Créer les chemins GCS Batch et Replay</div><div class="check">Implémenter l'ETL PySpark Batch</div>
+      <div class="check">Créer les tables Gold conformes</div><div class="check">Charger 2015–2017</div>
+      <div class="check">Construire Fact_ML_Features</div><div class="check">Entraîner le modèle demande</div>
+      <div class="check">Déployer le replay 2018 après plan approuvé</div><div class="check">Ajouter l'inférence Streaming</div>
+      <div class="check">Intégrer solaire et éolien</div><div class="check">Entraîner le modèle prix</div>
+      <div class="check">Activer anomalies et Decision Engine</div><div class="check">Construire le cube et LookML</div>
+    </div>
+    <div class="callout warning" style="margin-top:16px"><strong>Gouvernance :</strong> aucun <code>terraform apply</code>, déploiement Cloud Run ou service payant ne doit être lancé avant revue de l'état, du plan Terraform et des coûts.</div>
+  </section>
+
+  <footer>SmartGrid Pulse · Flux métier cible · Document autonome sans dépendance externe.</footer>
+</div>
+</body>
+</html>

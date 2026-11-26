@@ -6,3 +6,6 @@
 *.tfvars.json
 __pycache__/
 *.py[cod]
+data/
+checkpoints/
+.env

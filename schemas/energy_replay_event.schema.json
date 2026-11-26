@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smartgrid-pulse.local/schemas/energy-replay-event-1.0.json",
+  "title": "SmartGrid Pulse - Energy replay event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_time",
+    "source",
+    "country_code",
+    "actual_load_mw",
+    "weather"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "event_id": { "type": "string", "pattern": "^es-2018-[a-f0-9]{24}$" },
+    "event_time": { "type": "string", "format": "date-time" },
+    "source": { "const": "STREAM_REPLAY" },
+    "country_code": { "const": "ES" },
+    "actual_load_mw": { "type": "number", "minimum": 0 },
+    "forecast_load_mw": { "type": ["number", "null"], "minimum": 0 },
+    "price_actual_eur_mwh": { "type": ["number", "null"] },
+    "generation_solar_mw": { "type": ["number", "null"], "minimum": 0 },
+    "generation_wind_onshore_mw": { "type": ["number", "null"], "minimum": 0 },
+    "generation_wind_offshore_mw": { "type": ["number", "null"], "minimum": 0 },
+    "weather": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["city_name", "temperature_c", "humidity_pct", "wind_speed_m_s"],
+        "properties": {
+          "city_name": { "type": "string", "minLength": 1 },
+          "temperature_c": { "type": "number" },
+          "humidity_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+          "pressure_hpa": { "type": ["number", "null"], "minimum": 0 },
+          "wind_speed_m_s": { "type": "number", "minimum": 0 },
+          "wind_direction_deg": { "type": ["number", "null"], "minimum": 0, "maximum": 360 },
+          "cloud_cover_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "weather_main": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
